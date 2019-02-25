@@ -1,61 +1,47 @@
 Timer unit: 1e-06 s
 
-Total time: 0.358604 s
-File: <ipython-input-64-c2709468133f>
-Function: kalman_update_state at line 34
+Total time: 26.1285 s
+File: <ipython-input-75-6e8f6bbda32b>
+Function: compute_kalman at line 59
 
 Line #      Hits         Time  Per Hit   % Time  Line Contents
 ==============================================================
-    34                                           def kalman_update_state(xk, zk, K, H):
-    35      4759      24422.0      5.1      6.8      Hxk = np.matmul(H, xk)
-    36      4759     136958.0     28.8     38.2      zk = np.concatenate((zk, np.asmatrix([0])))
-    37      4759     113837.0     23.9     31.7      zk = np.concatenate((zk, np.asmatrix([0])))
-    38      4759      83387.0     17.5     23.3      return xk+np.matmul(K, zk-Hxk )
-
-Total time: 1.23793 s
-File: <ipython-input-64-c2709468133f>
-Function: compute_kalman at line 57
-
-Line #      Hits         Time  Per Hit   % Time  Line Contents
-==============================================================
-    57                                           def compute_kalman(data, reverse=False):
-    58                                               ## Assume that the initial state is position (0, 0) and velocity (0, 0)       
-    59         1          2.0      2.0      0.0      acc = data.acc_ERC
-    60         1          1.0      1.0      0.0      gps = data.gps
-    61                                               
-    62         1          1.0      1.0      0.0      if(reverse):
-    63                                                   acc, gps = reverse_data(acc, gps)
-    64                                           
-    65         1         46.0     46.0      0.0      x0 = np.asmatrix([gps[0, 1], gps[0, 2], 0, 0]).T
-    66         1          1.0      1.0      0.0      xks = [x0]
-    67         1         17.0     17.0      0.0      u0 = acc[0, 1:3].T
-    68         1          1.0      1.0      0.0      uks = [u0]
-    69         1         32.0     32.0      0.0      Fk = np.asmatrix(np.identity(4))
-    70         1          2.0      2.0      0.0      Bk = np.zeros((4, 2))
-    71                                           
-    72         1          0.0      0.0      0.0      acc_stddev = 0.6
+    59                                           def compute_kalman(data, reverse=False):
+    60                                               ## Assume that the initial state is position (0, 0) and velocity (0, 0)       
+    61         1          2.0      2.0      0.0      acc = data.acc_ERC
+    62         1          1.0      1.0      0.0      gps = data.gps
+    63                                               
+    64         1          1.0      1.0      0.0      if(reverse):
+    65                                                   acc, gps = reverse_data(acc, gps)
+    66                                           
+    67         1         39.0     39.0      0.0      x0 = np.asmatrix([gps[0, 1], gps[0, 2], 0, 0]).T
+    68         1          1.0      1.0      0.0      xks = [x0]
+    69         1         16.0     16.0      0.0      u0 = acc[0, 1:3].T
+    70         1          1.0      1.0      0.0      uks = [u0]
+    71         1         28.0     28.0      0.0      Fk = np.asmatrix(np.identity(4))
+    72         1          2.0      2.0      0.0      Bk = np.zeros((4, 2))
     73                                           
-    74         1          1.0      1.0      0.0      P0 = np.zeros((4, 4))
-    75         1          1.0      1.0      0.0      Pks = [P0]
-    76                                           
-    77         1          8.0      8.0      0.0      H = np.identity(4)
-    78         1          1.0      1.0      0.0      H[2, 2] = 0.0
-    79         1          1.0      1.0      0.0      H[3, 3] = 0.0
-    80         1          0.0      0.0      0.0      gps_var = 15.2
-    81         1         13.0     13.0      0.0      R = gps_var*np.identity(4)
-    82                                               
-    83      4760       5294.0      1.1      0.4      for i in range(1, acc.shape[0]):
-    84      4759      32835.0      6.9      2.7          dt = acc[i, 0] - acc[i-1, 0]
-    85      4759     344077.0     72.3     27.8          xk, Pk, Fk, Bk = kalman_predict(dt, Fk, Bk, xks[-1], uks[-1], Pks[-1], acc_stddev)
-    86      4759       6378.0      1.3      0.5          xks.append(xk)
-    87      4759      76775.0     16.1      6.2          uks.append(acc[i, 1:3].T)
-    88      4759       5207.0      1.1      0.4          Pks.append(Pk)
-    89      4759      65341.0     13.7      5.3          zk = gps[i, 1:3].T
+    74         1          0.0      0.0      0.0      acc_stddev = 0.6
+    75                                           
+    76         1          1.0      1.0      0.0      P0 = np.zeros((4, 4))
+    77         1          1.0      1.0      0.0      Pks = [P0]
+    78                                           
+    79         1          8.0      8.0      0.0      H = np.identity(4)
+    80         1          1.0      1.0      0.0      H[2, 2] = 0.0
+    81         1          1.0      1.0      0.0      H[3, 3] = 0.0
+    82         1          0.0      0.0      0.0      gps_var = 15.2
+    83         1         10.0     10.0      0.0      R = gps_var*np.identity(4)
+    84                                               
+    85    163428     125131.0      0.8      0.5      for i in range(1, acc.shape[0]):
+    86    163427     751824.0      4.6      2.9          dt = acc[i, 0] - acc[i-1, 0]
+    87    163427    7109530.0     43.5     27.2          xk, Pk, Fk, Bk = kalman_predict(dt, Fk, Bk, xks[-1], acc[i-1, 1:3].T, Pks[-1], acc_stddev)
+    88    163427     141906.0      0.9      0.5          xks.append(xk)
+    89    163427     100807.0      0.6      0.4          Pks.append(Pk)
     90                                           
-    91      4759     235807.0     49.5     19.0          K = kalman_gain(Pks[-1], H, R)
-    92      4759     379061.0     79.7     30.6          xks[-1] = kalman_update_state(xk, zk, K, H)
-    93      4759      82976.0     17.4      6.7          Pks[-1] = kalman_update_uncertainty(Pks[-1], K, H)
+    91    163427    5572014.0     34.1     21.3          K = kalman_gain(Pks[-1], H, R)
+    92    163427   10303986.0     63.0     39.4          xks[-1] = kalman_update_state(xk, gps[i, 1:3].T, K, H)
+    93    163427    1930911.0     11.8      7.4          Pks[-1] = kalman_update_uncertainty(Pks[-1], K, H)
     94                                                   
     95                                           
-    96         1       3401.0   3401.0      0.3      xks = np.concatenate(xks, axis=1).T
-    97         1        649.0    649.0      0.1      data.init_kalman(xks, reverse)
+    96         1      84754.0  84754.0      0.3      xks = np.concatenate(xks, axis=1).T
+    97         1       7512.0   7512.0      0.0      data.init_kalman(xks, reverse)
