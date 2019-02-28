@@ -1,70 +1,49 @@
 Timer unit: 1e-06 s
 
-Total time: 11.0449 s
-File: <ipython-input-45-88d299d17e1a>
-Function: __init__ at line 23
+Total time: 17.8815 s
+File: <ipython-input-59-1cd832ebbcfe>
+Function: compute_kalman at line 58
 
 Line #      Hits         Time  Per Hit   % Time  Line Contents
 ==============================================================
-    23                                               def __init__(self, filename, invert=False, load_truth=False):
-    24         1          1.0      1.0      0.0          if(load_truth):
-    25                                                       self.ground_truth = GroundTruthGPX(filename)
-    26                                                       print("Loaded Ground Truth")
-    27                                                       
-    28         1          3.0      3.0      0.0          self.var_codes = {1.0 : [], 82.0 : [], 84.0 : [], 3.0 : [], 4.0 : [], 5.0 : []}
-    29         1          1.0      1.0      0.0          filename = 'Data/streams/' + filename
-    30                                                   ##Parse file
-    31         1         41.0     41.0      0.0          f=open(filename, "r")
-    32         1          1.0      1.0      0.0          start_time = False
-    33    241201     283816.0      1.2      2.6          for line in f:
-    34    241200     279914.0      1.2      2.5              line = line.split(',')
-    35    241200     194690.0      0.8      1.8              if(start_time == False):
-    36         1          2.0      2.0      0.0                  start_time = float(line[0])
-    37    241200    2081419.0      8.6     18.8              self.process_csv_line(start_time, line)
-    38         1        493.0    493.0      0.0          self.var_codes[1.0] = np.delete(self.var_codes.get(1.0), (0), axis=0) #GPS cant be (0 0 0 0) at init
-    39         7      63044.0   9006.3      0.6          for key, value in self.var_codes.items():
-    40         6     261608.0  43601.3      2.4              self.var_codes[key] = np.asmatrix(value)
-    41         1         52.0     52.0      0.0          print("Parsed File")
-    42                                                   
-    43         1          2.0      2.0      0.0          self.var_codes[13.0] = self.var_codes[1.0]
-    44         1      10904.0  10904.0      0.1          self.var_codes[1.0] = self.swap_xy(self.var_codes[1.0])
-    45         1      10404.0  10404.0      0.1          self.var_codes[13.0] = self.swap_xy(self.var_codes[13.0])
-    46                                                   
-    47                                                   ##Convert longitude and latitutde of GPS sensor to meters
-    48         1      14765.0  14765.0      0.1          self.var_codes[1.0] = self.convert_longlat_to_dis(self.var_codes.get(1.0))
-    49                                                   
-    50                                                   ##Interpolate rotation and acceleration so that they occur at the same time step
-    51         1         13.0     13.0      0.0          new_time = self.var_codes.get(3.0)[:, 0] # Set timesteps to be that of the acceleration, as it has most readings
-    52         8       9457.0   1182.1      0.1          for key, value in self.var_codes.items():
-    53                                           #             if(key != 1.0):
-    54         7         17.0      2.4      0.0              irreg_var = value
-    55         7      14318.0   2045.4      0.1              reg_varX = np.asmatrix(np.interp(new_time, np.ravel(irreg_var[:,0]), np.ravel(irreg_var[:,1])))
-    56         7      12984.0   1854.9      0.1              reg_varY = np.asmatrix(np.interp(new_time, np.ravel(irreg_var[:,0]), np.ravel(irreg_var[:,2])))
-    57         7      12412.0   1773.1      0.1              reg_varZ = np.asmatrix(np.interp(new_time, np.ravel(irreg_var[:,0]), np.ravel(irreg_var[:,3])))
-    58         7      18235.0   2605.0      0.2              self.var_codes[key] = np.concatenate((new_time, reg_varX, reg_varY, reg_varZ), axis=1)
-    59         1         61.0     61.0      0.0          print("Interpolated Samples")
-    60                                                   
-    61                                           
-    62                                                   ##Set class members to matrices read from csv
-    63         1          3.0      3.0      0.0          self.acc_DRC = self.var_codes.get(82.0)
-    64         1          2.0      2.0      0.0          self.rot_vec = self.var_codes.get(84.0)
-    65         1          1.0      1.0      0.0          self.gyro = self.var_codes.get(4.0)
-    66         1          2.0      2.0      0.0          self.mag = self.var_codes.get(5.0)
-    67         1          1.0      1.0      0.0          self.acc_with_grav = self.var_codes.get(3.0)
-    68         1          1.0      1.0      0.0          self.gps = self.var_codes.get(1.0)
-    69         1          1.0      1.0      0.0          self.gps_latlng = self.var_codes.get(13.0)
-    70                                                   
-    71                                                   # If device axis is wrong, invert data
-    72         1       2345.0   2345.0      0.0          self.invert_acceleration()
-    73                                                   
-    74                                                   ##Use rotation vectors to achieve acceleration in ERC        
-    75         1    7746661.0 7746661.0     70.1          self.acc_ERC = self.rotate_acceleration(self.rot_vec, self.acc_DRC)
-    76         1         63.0     63.0      0.0          print("Rotated Acceleration")
-    77                                                   
-    78                                                   ##Integrate each acceleration to calculate velocity and displacement
-    79         1      26650.0  26650.0      0.2          self.integrate_variables()
-    80         1         57.0     57.0      0.0          print("Integrated Acceleration")
-    81                                                   
-    82                                                   #Calculate Acc_DRC frequency
-    83         1        464.0    464.0      0.0          self.time_period = np.mean(np.diff(self.acc_ERC[:, 0].T))
-    84         1          4.0      4.0      0.0          self.frequency = 1/self.time_period
+    58                                           def compute_kalman(data, reverse=False):
+    59                                               ## Assume that the initial state is position (0, 0) and velocity (0, 0)       
+    60         1         11.0     11.0      0.0      acc = data.acc_ERC.T
+    61         1          4.0      4.0      0.0      gps = data.gps.T
+    62                                               
+    63         1          1.0      1.0      0.0      if(reverse):
+    64                                                   acc, gps = reverse_data(acc, gps)
+    65         1       1329.0   1329.0      0.0      gps = np.concatenate((gps[1:3, :], np.zeros((2, gps.shape[1]))))
+    66                                               
+    67                                               
+    68         1         79.0     79.0      0.0      x0 = np.asmatrix([gps[0, 0], gps[1, 0], 0, 0]).T
+    69         1          2.0      2.0      0.0      xks = [x0]
+    70         1         17.0     17.0      0.0      u0 = acc[1:3, 0]
+    71         1          1.0      1.0      0.0      uks = [u0]
+    72         1         42.0     42.0      0.0      Fk = np.asmatrix(np.identity(4))
+    73         1          2.0      2.0      0.0      Bk = np.zeros((4, 2))
+    74                                           
+    75         1          1.0      1.0      0.0      acc_stddev = 0.6
+    76                                           
+    77         1          2.0      2.0      0.0      P0 = np.zeros((4, 4))
+    78         1          2.0      2.0      0.0      Pks = [P0]
+    79                                           
+    80         1         15.0     15.0      0.0      H = np.identity(4)
+    81         1          2.0      2.0      0.0      H[2, 2] = 0.0
+    82         1          1.0      1.0      0.0      H[3, 3] = 0.0
+    83         1          1.0      1.0      0.0      gps_var = 15.2
+    84         1         21.0     21.0      0.0      R = gps_var*np.identity(4)
+    85         1          2.0      2.0      0.0      Q = np.zeros((4,4))
+    86    163428     113296.0      0.7      0.6      for i in range(1, acc.shape[1]):
+    87    163427     673249.0      4.1      3.8          dt = acc[0, i] - acc[0, i-1]
+    88    163427    6122129.0     37.5     34.2          xk, Pk, Fk, Bk = kalman_predict(dt, Fk, Bk, xks[-1], acc[1:3, i-1], Pks[-1], Q, acc_stddev)
+    89    163427     138138.0      0.8      0.8          xks.append(xk)
+    90    163427      99395.0      0.6      0.6          Pks.append(Pk)
+    91                                           
+    92    163427    5294557.0     32.4     29.6          K = kalman_gain(Pks[-1], H, R)
+    93    163427    3600421.0     22.0     20.1          xks[-1] = kalman_update_state(xk, gps[:, i], K, H)
+    94    163427    1753479.0     10.7      9.8          Pks[-1] = kalman_update_uncertainty(Pks[-1], K, H)
+    95                                                   
+    96                                           
+    97         1      76533.0  76533.0      0.4      xks = np.concatenate(xks, axis=1).T
+    98         1       8810.0   8810.0      0.0      data.init_kalman(xks, reverse)
