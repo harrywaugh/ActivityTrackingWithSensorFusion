@@ -633,8 +633,8 @@ class PlotLosses(tf.keras.callbacks.Callback):
         plt.ioff()
         plt.show();
 
-def plot_dataset(dataset, seq_len=100):
-    
+def plot_dataset(dataset, seq_len=100, filenames=[]):
+	count = 0
     for activity in dataset:
         input_data = activity[0]
         ground_truth = activity[1]
@@ -664,12 +664,12 @@ def plot_dataset(dataset, seq_len=100):
         plt.legend()
         plt.xlabel('Position X (Metres)')
         plt.ylabel('Position Y (Metres)')
-        plt.savefig("loss.pdf", bbox_inches = 'tight', pad_inches = 0)
+        plt.savefig(str(filenames[count])+".pdf", bbox_inches = 'tight', pad_inches = 0)
         plt.show()
 
         print("Accuracy of GPS: ", measure_accuracy(ground_truth, orig_gps))
         print("Accuracy of RNN: ", measure_accuracy(ground_truth, predicted_output))
-        
+        count++
 
 x_dim      = 11
 y_dim      = 2
@@ -813,8 +813,8 @@ for activity in scaled_testing_dataset:
 ###########################################################
 ################## PLOT TEST AND TRAINING DATA
 ###########################################################
-plot_dataset(testing_dataset, seq_len=seq_len)
-plot_dataset(training_dataset, seq_len=seq_len)
+plot_dataset(testing_dataset,  seq_len=seq_len, filenames=testing_files)
+plot_dataset(training_dataset, seq_len=seq_len, filenames=training_files)
 
 tf.reset_default_graph()
 sess.close()
