@@ -632,6 +632,7 @@ class PlotLosses(tf.keras.callbacks.Callback):
         plt.ylabel('Loss')
         plt.savefig("Loss.pdf", bbox_inches = 'tight', pad_inches = 0)
         plt.ioff()
+        plt.close()
         # plt.show();
 
 def plot_dataset(dataset, seq_len=100, filenames=[]):
@@ -704,8 +705,8 @@ y_scaler = y_scaler.fit(custom_scale_matrix[:, 0:2])
 print("\n###########################################################")
 print("######### Loading Data")
 print("###########################################################\n")
-training_files = ['uni', 'uni1', 'uni2', 'train0', 'dog0']
-testing_files  = ['mb0', 'tutoring0']
+training_files = ['uni', 'tutoring0', 'uni2', 'train0', 'dog0']
+testing_files  = ['mb0', 'uni1']
 training_dataset = load_datasets(training_files, higher_freq=False, no_cache=False)
 testing_dataset = load_datasets(testing_files, higher_freq=False, no_cache=False)
 scaled_training_dataset, scaled_testing_dataset = scale_dataset(training_dataset, testing_dataset)
@@ -719,7 +720,7 @@ print("######### Hyper-Parameters")
 print("###########################################################\n")
 
 seq_len         = 170
-seq_offset      = 85
+seq_offset      = 40
 training_length = 0
 testing_length  = 0
 warmup_steps    = 5
