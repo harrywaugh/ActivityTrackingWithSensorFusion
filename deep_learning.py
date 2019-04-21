@@ -724,12 +724,14 @@ print("######### Training Data")
 print("###########################################################\n")
 PRINT_DEBUG = False
 print("Training Activities: ", len(training_dataset))
+print(training_files)
 for i in range(len(training_dataset)):
     if(PRINT_DEBUG): print("    ",training_files[i],  "Activity ", i, " Length: ", len(training_dataset[i][0]))
     training_length += len(training_dataset[i][0])
 if(PRINT_DEBUG): print("Total Training Length: ", training_length)
 
 print("Number of Testing Activities: ", len(testing_dataset))
+print(testing_files)
 for i in range(len(testing_dataset)):
     if(PRINT_DEBUG): print("    ", testing_files[i], "Activity ", i, " Length: ", len(testing_dataset[i][0]))
     testing_length += len(testing_dataset[i][0])
