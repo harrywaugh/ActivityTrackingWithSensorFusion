@@ -27,7 +27,8 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 def measure_accuracy(ground_truth, test):
     diff_vectors = ground_truth - test
     accuracy = np.mean(np.linalg.norm(diff_vectors, ord = 2, axis = 1))
-
+    return accuracy
+    
 class GroundTruthGPX:
 	latlngs = np.asmatrix([0.0, 0.0])
 	def __init__(self, filename, gps, load_cache=False):
