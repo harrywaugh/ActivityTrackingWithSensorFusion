@@ -705,7 +705,7 @@ y_scaler = y_scaler.fit(custom_scale_matrix[:, 0:2])
 print("\n###########################################################")
 print("######### Loading Data")
 print("###########################################################\n")
-training_files = ['uni', 'tutoring0', 'uni2', 'train0', 'dog0']
+training_files = ['uni', 'tutoring0', 'uni2', 'dog0', 'train0']
 testing_files  = ['mb0', 'uni1']
 training_dataset = load_datasets(training_files, higher_freq=False, no_cache=False)
 testing_dataset = load_datasets(testing_files, higher_freq=False, no_cache=False)
@@ -720,7 +720,7 @@ print("######### Hyper-Parameters")
 print("###########################################################\n")
 
 seq_len         = 170
-seq_offset      = 40
+seq_offset      = 10
 training_length = 0
 testing_length  = 0
 warmup_steps    = 5
