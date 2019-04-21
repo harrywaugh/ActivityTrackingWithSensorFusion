@@ -155,7 +155,7 @@ class GroundTruthGPX:
 	    
 	def read_from_cache(self, filename):
 	    self.dis = self.read_var_from_cache(filename, "dis")
-	    self.latlngs = self.read_var_from_cache(filename, "latlng")
+	    # self.latlngs = self.read_var_from_cache(filename, "latlng")
 	    print("READ GROUND TRUTH DATA FROM CACHE")
 	    
 	def read_var_from_cache(self, filename, var_name):
@@ -169,7 +169,7 @@ class GroundTruthGPX:
 
 	def write_to_cache(self, filename):
 	    self.write_var_to_cache(filename, "dis", self.dis)
-	    self.write_var_to_cache(filename, "latlng", self.latlngs)
+	    # self.write_var_to_cache(filename, "latlng", self.latlngs)
 	    print("WRITTEN GROUND TRUTH DATA TO CACHE")
 
 	def write_var_to_cache(self, filename, var_name, data):
@@ -707,8 +707,8 @@ print("######### Loading Data")
 print("###########################################################\n")
 training_files = ['uni', 'tutoring0', 'uni2', 'train0', 'dog0']
 testing_files  = ['mb0', 'uni1']
-training_dataset = load_datasets(training_files, higher_freq=False, no_cache=True)
-testing_dataset = load_datasets(testing_files, higher_freq=False, no_cache=True)
+training_dataset = load_datasets(training_files, higher_freq=False, no_cache=False)
+testing_dataset = load_datasets(testing_files, higher_freq=False, no_cache=False)
 scaled_training_dataset, scaled_testing_dataset = scale_dataset(training_dataset, testing_dataset)
 
 
