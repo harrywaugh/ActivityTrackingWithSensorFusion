@@ -28,7 +28,7 @@ def measure_accuracy(ground_truth, test):
     diff_vectors = ground_truth - test
     accuracy = np.mean(np.linalg.norm(diff_vectors, ord = 2, axis = 1))
     return accuracy
-    
+
 class GroundTruthGPX:
 	latlngs = np.asmatrix([0.0, 0.0])
 	def __init__(self, filename, gps, load_cache=False):
@@ -632,7 +632,7 @@ class PlotLosses(tf.keras.callbacks.Callback):
         plt.ylabel('Loss')
         plt.savefig("Loss.pdf", bbox_inches = 'tight', pad_inches = 0)
         plt.ioff()
-        plt.show();
+        # plt.show();
 
 def plot_dataset(dataset, seq_len=100, filenames=[]):
     count = 0
@@ -687,6 +687,15 @@ y_scaler = MinMaxScaler()
 y_scaler = y_scaler.fit(custom_scale_matrix[:, 0:2])
 
 
+data = Data_Stream('dog0', load_truth=True, higher_freq=False, no_cache=True)
+plt.plot(data.gps[:, 1], data.gps[:, 2])
+plt.show()
+data = Data_Stream('train0', load_truth=True, higher_freq=False, no_cache=True)
+plt.plot(data.gps[:, 1], data.gps[:, 2])
+plt.show()
+data = Data_Stream('mb0', load_truth=True, higher_freq=False, no_cache=True)
+plt.plot(data.gps[:, 1], data.gps[:, 2])
+plt.show()
 
 ###########################################################
 ################## CHOOSE TRAINING AND TESTING FILES
@@ -695,7 +704,7 @@ print("\n###########################################################")
 print("######### Loading Data")
 print("###########################################################\n")
 training_files = ['uni', 'tutoring0', 'uni2']
-testing_files = ['uni1']
+testing_files  = ['uni1']
 training_dataset = load_datasets(training_files, higher_freq=False, no_cache=False)
 testing_dataset = load_datasets(testing_files, higher_freq=False, no_cache=False)
 scaled_training_dataset, scaled_testing_dataset = scale_dataset(training_dataset, testing_dataset)
@@ -708,11 +717,11 @@ print("\n###########################################################")
 print("######### Hyper-Parameters")
 print("###########################################################\n")
 
-seq_len = 170
-seq_offset = 85
+seq_len         = 170
+seq_offset      = 85
 training_length = 0
-testing_length = 0
-warmup_steps = 20
+testing_length  = 0
+warmup_steps    = 20
 
 print("Sequence Length: ", seq_len)
 print("Sequence Offset: ", seq_offset)
