@@ -722,7 +722,7 @@ print("###########################################################\n")
 seq_len         = 1700
 seq_offset      = int(seq_len/10)
 warmup_steps    = int(seq_len/40)
-batch_size      = 32
+batch_size      = 16
 print("Sequence Length: ", seq_len)
 print("Sequence Offset: ", seq_offset)
 
