@@ -722,7 +722,7 @@ print("###########################################################\n")
 seq_len         = 1700
 seq_offset      = int(seq_len/10)
 warmup_steps    = int(seq_len/40)
-
+batch_size      = 32
 print("Sequence Length: ", seq_len)
 print("Sequence Offset: ", seq_offset)
 
@@ -759,7 +759,7 @@ print("Testing Data Consists of  ", x_test_seqs.shape[0], " Unique Sequences of 
 
 
 sequences = x_train_seqs.shape[0]
-batch_size = min(sequences, 256)
+batch_size = min(sequences, batch_size)
 print("\nTraining Batch Size: ", batch_size)
 batches_per_epoch = int(sequences/batch_size)+1
 # batches_per_epoch = 1+int(training_length/(seq_len*batch_size))
