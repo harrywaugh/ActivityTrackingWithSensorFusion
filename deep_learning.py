@@ -21,6 +21,8 @@ from tensorflow.python.keras.models import Sequential
 from tensorflow.python.keras.utils import multi_gpu_model
 from tensorflow.python.keras.layers import Input, Dense, GRU, Embedding, Bidirectional, LSTM
 from tensorflow.python.keras.optimizers import RMSprop, Adam
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+
 
 def measure_accuracy(ground_truth, test):
     diff_vectors = ground_truth - test
@@ -519,22 +521,7 @@ def load_datasets(files, higher_freq=True, no_cache=False):
         training_datasets.append([input_data, ground_truth])
     return training_datasets
 
-gps_bound = 3000.0 #Actual bound (3000)
-acc_bound = 3000.0 #Actual bound (30)
-gyro_bound = 3000.0 #Actual bound (2)
-mag_bound = 3000.0 #Actual bound (30)
-dt_bound = 3000.0 #Actual bound (0.1)
 
-custom_scale_matrix = np.asmatrix([gps_bound, gps_bound,
-                                   acc_bound, acc_bound, acc_bound, 
-                                   gyro_bound, gyro_bound, gyro_bound,
-                                   mag_bound, mag_bound, dt_bound])
-custom_scale_matrix = np.concatenate((custom_scale_matrix, -custom_scale_matrix))
-
-x_scaler = MinMaxScaler()
-x_scaler = x_scaler.fit(custom_scale_matrix)
-y_scaler = MinMaxScaler()
-y_scaler = y_scaler.fit(custom_scale_matrix[:, 0:2])
 
 def scale_dataset(training_dataset, test_dataset):
     scaled_training_dataset = []
@@ -684,71 +671,104 @@ def plot_dataset(dataset, seq_len=100):
         print("Accuracy of RNN: ", measure_accuracy(ground_truth, predicted_output))
         
 
-x_dim=11
-y_dim=2
+x_dim      = 11
+y_dim      = 2
+gps_bound  = 3000.0 #Actual bound (3000)
+acc_bound  = 3000.0 #Actual bound (30)
+gyro_bound = 3000.0 #Actual bound (2)
+mag_bound  = 3000.0 #Actual bound (30)
+dt_bound   = 3000.0 #Actual bound (0.1)
+custom_scale_matrix = np.asmatrix([gps_bound, gps_bound, acc_bound, acc_bound, acc_bound,  gyro_bound, gyro_bound, gyro_bound, mag_bound, mag_bound, dt_bound])
+custom_scale_matrix = np.concatenate((custom_scale_matrix, -custom_scale_matrix))
+x_scaler = MinMaxScaler()
+x_scaler = x_scaler.fit(custom_scale_matrix)
+y_scaler = MinMaxScaler()
+y_scaler = y_scaler.fit(custom_scale_matrix[:, 0:2])
 
 
+
+###########################################################
+################## CHOOSE TRAINING AND TESTING FILES
+###########################################################
+print("\n###########################################################")
+print("######### Loading Data")
+print("###########################################################\n")
 training_files = ['uni', 'tutoring0', 'uni2']
 testing_files = ['uni1']
-
-
 training_dataset = load_datasets(training_files, higher_freq=False, no_cache=False)
 testing_dataset = load_datasets(testing_files, higher_freq=False, no_cache=False)
 scaled_training_dataset, scaled_testing_dataset = scale_dataset(training_dataset, testing_dataset)
 
 
+###########################################################
+################## HYPER-PARAMETERS
+###########################################################
+print("\n###########################################################")
+print("######### Hyper-Parameters")
+print("###########################################################\n")
+
 seq_len = 170
-seq_offset = 1
+seq_offset = 85
 training_length = 0
 testing_length = 0
-print("Training Data")
+warmup_steps = 20
+
 print("Sequence Length: ", seq_len)
 print("Sequence Offset: ", seq_offset)
 
-print("\nNumber of Training Activities: ", len(training_dataset))
+###########################################################
+################## MAKE SEQUENCES
+###########################################################
+print("\n###########################################################")
+print("######### Training Data")
+print("###########################################################\n")
+PRINT_DEBUG = False
+print("Training Activities: ", len(training_dataset))
 for i in range(len(training_dataset)):
-    print("    ",training_files[i],  "Activity ", i, " Length: ", len(training_dataset[i][0]))
+    if(PRINT_DEBUG): print("    ",training_files[i],  "Activity ", i, " Length: ", len(training_dataset[i][0]))
     training_length += len(training_dataset[i][0])
-print("Total Training Length: ", training_length)
+if(PRINT_DEBUG): print("Total Training Length: ", training_length)
 
-print("\nNumber of Testing Activities: ", len(testing_dataset))
+print("Number of Testing Activities: ", len(testing_dataset))
 for i in range(len(testing_dataset)):
-    print("    ", testing_files[i], "Activity ", i, " Length: ", len(testing_dataset[i][0]))
+    if(PRINT_DEBUG): print("    ", testing_files[i], "Activity ", i, " Length: ", len(testing_dataset[i][0]))
     testing_length += len(testing_dataset[i][0])
-print("Total Training Length: ", testing_length)
+if(PRINT_DEBUG): print("Total Training Length: ", testing_length)
 
-
+print("\n###########################################################")
+print("######### Training Sequences and Batches")
+print("###########################################################\n")
 x_train_seqs, y_train_seqs = get_seqs(sequence_length=seq_len, dataset=scaled_training_dataset, offset=seq_offset)
-print("\nTraining Data Consists of ", x_train_seqs.shape[0], " Unique Sequences of Length ", seq_len)
+print("Training Data Consists of ", x_train_seqs.shape[0], " Unique Sequences of Length ", seq_len)
 x_test_seqs, y_test_seqs = get_seqs(sequence_length=seq_len, dataset=scaled_testing_dataset, offset=seq_offset)
-print("Testing Data Consists of ", x_test_seqs.shape[0], " Unique Sequences of Length ", seq_len)
+print("Testing Data Consists of  ", x_test_seqs.shape[0], " Unique Sequences of Length ", seq_len)
+
 
 sequences = x_train_seqs.shape[0]
 batch_size = min(sequences, 256)
 print("\nTraining Batch Size: ", batch_size)
 batches_per_epoch = int(sequences/batch_size)+1
-print("Number of Training Batches: ", str(batches_per_epoch))
-
-
-print("Training Length", training_length)
-print("Number of Sequences", x_train_seqs.shape[0])
-print("Sequence Length", seq_len)
-print("Sequence Offset", seq_offset)
-
-print("\nBatch Size", batch_size)
-print("Batches per Epoch", batches_per_epoch)
 # batches_per_epoch = 1+int(training_length/(seq_len*batch_size))
-print("Batches per Epoch", batches_per_epoch)
+print("Batches per Epoch: ", str(batches_per_epoch))
 
+
+print("\n###########################################################")
+print("######### Validation Data")
+print("###########################################################\n")
 val_batch_size = int(0.3*x_test_seqs.shape[0])
 print("\nNumber of Validation Sequences: ", val_batch_size)
 val_generator = batch_generator(batch_size=val_batch_size, x_seqs=x_test_seqs, y_seqs=y_test_seqs)
 val_batch_x, val_batch_y = next(val_generator)
-
 validation_data = (val_batch_x, val_batch_y)
 
+
+###########################################################
+################## COMPILE MODEL
+###########################################################
+print("\n###########################################################")
+print("######### Model")
+print("###########################################################\n")
 sess = tf.InteractiveSession()
-generator = batch_generator(batch_size=batch_size, x_seqs=x_train_seqs, y_seqs=y_train_seqs)
 
 model = Sequential()
 model.add(GRU(units=128, return_sequences=True, input_shape=(None, x_dim,)))
@@ -757,65 +777,44 @@ model.add(GRU(units=128, return_sequences=True, input_shape=(None, x_dim,)))
 model.add(GRU(units=128, return_sequences=True, input_shape=(None, x_dim,)))
 model.add(GRU(units=128, return_sequences=True, input_shape=(None, x_dim,)))
 model.add(GRU(units=128, return_sequences=True, input_shape=(None, x_dim,)))
-# model.add(GRU(units=1024, return_sequences=True))
 model.add(Dense(y_dim, activation='linear'))
-
-warmup_steps = 20
-
 optimizer = Adam(lr=1e-3)
-# model = multi_gpu_model(model, gpus=2)
-
 model.compile(loss=custom_loss, optimizer=optimizer)
 model.summary()
 
 
-
-# path_checkpoint = '23_checkpoint.keras'
-# callback_checkpoint = ModelCheckpoint(filepath=path_checkpoint,
-#                                       monitor='val_loss',
-#                                       verbose=1,
-#                                       save_weights_only=True,
-#                                       save_best_only=True)
-callback_early_stopping = EarlyStopping(monitor='val_loss',
-                                        patience=4, verbose=1)
-# callback_tensorboard = TensorBoard(log_dir='./23_logs/',
-#                                    histogram_freq=0,
-#                                    write_graph=False)
-callback_reduce_lr = ReduceLROnPlateau(monitor='val_loss',
-                                       factor=0.1,
-                                       min_lr=1e-9,
-                                       patience=2,
-                                       verbose=1)      
+###########################################################
+################## CREATE CALLBACK and TRAIN MODEL
+###########################################################
+# path_checkpoint = 'RNN.checkpoint'
+# callback_checkpoint = ModelCheckpoint(filepath=path_checkpoint, monitor='val_loss', verbose=1, save_weights_only=True, save_best_only=True)
+# callback_tensorboard = TensorBoard(log_dir='./23_logs/', histogram_freq=0, write_graph=False)
+callback_early_stopping = EarlyStopping(monitor='val_loss', patience=4, verbose=1)
+callback_reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.1, min_lr=1e-9, patience=2, verbose=1)      
 plot_losses = PlotLosses()
-
-callbacks = [callback_early_stopping,
-#              callback_checkpoint,
-#              callback_tensorboard,
-             plot_losses,
-             callback_reduce_lr]
-print(batches_per_epoch)
+callbacks = [callback_early_stopping, plot_losses, callback_reduce_lr]
+generator = batch_generator(batch_size=batch_size, x_seqs=x_train_seqs, y_seqs=y_train_seqs)
+model.fit_generator(generator=generator, epochs=300, steps_per_epoch=batches_per_epoch, validation_data=validation_data, callbacks=callbacks)
 
 
 
-# model.fit(np.expand_dims(scaled_training_data, axis=0), np.expand_dims(scaled_training_labels, axis=0), epochs=10, 
-#           batch_size=32, validation_data=validation_data, callbacks=callbacks)
-model.fit_generator(generator=generator,
-                    epochs=300,
-                    steps_per_epoch=batches_per_epoch, #Number of batches per epoch
-                    validation_data=validation_data,
-                    callbacks=callbacks)
-
-
+###########################################################
+################## TESTING DATA
+###########################################################
+print("\n###########################################################")
+print("######### Testing Data")
+print("###########################################################\n")
 for activity in scaled_testing_dataset:
     print("Test Data")
     result = model.evaluate(x=np.expand_dims(activity[0], axis=0),
                             y=np.expand_dims(activity[1], axis=0))
     print("loss (test-set):", result)
 
-
-plot_dataset(training_dataset, seq_len=seq_len)
-
+###########################################################
+################## PLOT TEST AND TRAINING DATA
+###########################################################
 plot_dataset(testing_dataset, seq_len=seq_len)
+plot_dataset(training_dataset, seq_len=seq_len)
 
 tf.reset_default_graph()
 sess.close()
