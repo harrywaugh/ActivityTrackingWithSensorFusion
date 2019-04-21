@@ -808,7 +808,7 @@ callback_reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.1, min_lr=1e
 plot_losses = PlotLosses()
 callbacks = [callback_early_stopping, plot_losses, callback_reduce_lr]
 generator = batch_generator(batch_size=batch_size, x_seqs=x_train_seqs, y_seqs=y_train_seqs)
-model.fit_generator(generator=generator, verbose=2, epochs=300, steps_per_epoch=batches_per_epoch, validation_data=validation_data, callbacks=callbacks)
+model.fit_generator(generator=generator, verbose=2, epochs=40, steps_per_epoch=batches_per_epoch, validation_data=validation_data, callbacks=callbacks)
 
 
 
