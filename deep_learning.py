@@ -703,8 +703,8 @@ y_scaler = y_scaler.fit(custom_scale_matrix[:, 0:2])
 print("\n###########################################################")
 print("######### Loading Data")
 print("###########################################################\n")
-training_files = ['uni', 'tutoring0', 'uni2']
-testing_files  = ['uni1']
+training_files = ['uni', 'uni1', 'uni2', 'train0', 'dog0']
+testing_files  = ['mb0', 'tutoring0']
 training_dataset = load_datasets(training_files, higher_freq=False, no_cache=False)
 testing_dataset = load_datasets(testing_files, higher_freq=False, no_cache=False)
 scaled_training_dataset, scaled_testing_dataset = scale_dataset(training_dataset, testing_dataset)
