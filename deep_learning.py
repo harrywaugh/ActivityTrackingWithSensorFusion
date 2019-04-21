@@ -687,15 +687,15 @@ y_scaler = MinMaxScaler()
 y_scaler = y_scaler.fit(custom_scale_matrix[:, 0:2])
 
 
-data = Data_Stream('dog0', load_truth=True, higher_freq=False, no_cache=True)
-plt.plot(data.gps[:, 1], data.gps[:, 2])
-plt.show()
-data = Data_Stream('train0', load_truth=True, higher_freq=False, no_cache=True)
-plt.plot(data.gps[:, 1], data.gps[:, 2])
-plt.show()
-data = Data_Stream('mb0', load_truth=True, higher_freq=False, no_cache=True)
-plt.plot(data.gps[:, 1], data.gps[:, 2])
-plt.show()
+# data = Data_Stream('dog0', load_truth=True, higher_freq=False, no_cache=True)
+# plt.plot(data.gps[:, 1], data.gps[:, 2])
+# plt.show()
+# data = Data_Stream('train0', load_truth=True, higher_freq=False, no_cache=True)
+# plt.plot(data.gps[:, 1], data.gps[:, 2])
+# plt.show()
+# data = Data_Stream('mb0', load_truth=True, higher_freq=False, no_cache=True)
+# plt.plot(data.gps[:, 1], data.gps[:, 2])
+# plt.show()
 
 ###########################################################
 ################## CHOOSE TRAINING AND TESTING FILES
