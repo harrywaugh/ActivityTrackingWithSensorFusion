@@ -669,7 +669,7 @@ def plot_dataset(dataset, seq_len=100, filenames=[]):
 
         print("Accuracy of GPS: ", measure_accuracy(ground_truth, orig_gps))
         print("Accuracy of RNN: ", measure_accuracy(ground_truth, predicted_output))
-        count++
+        count+=1
 
 x_dim      = 11
 y_dim      = 2
