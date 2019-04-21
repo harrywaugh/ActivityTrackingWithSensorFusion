@@ -637,7 +637,7 @@ class PlotLosses(tf.keras.callbacks.Callback):
 def plot_dataset(dataset, seq_len=100, filenames=[]):
     count = 0
     for activity in dataset:
-    	print("Plotting ", filenames[count])
+        print("Plotting ", filenames[count])
         input_data = activity[0]
         ground_truth = activity[1]
         orig_gps = activity[0][:, 0:2]
