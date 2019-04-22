@@ -676,11 +676,11 @@ def plot_dataset(dataset, seq_len=100, filenames=[]):
 
 x_dim      = 11
 y_dim      = 2
-gps_bound  = 3000.0 #Actual bound (3000)
-acc_bound  = 3000.0 #Actual bound (30)
-gyro_bound = 3000.0 #Actual bound (2)
-mag_bound  = 3000.0 #Actual bound (30)
-dt_bound   = 3000.0 #Actual bound (0.1)
+gps_bound  = 1.0 #Actual bound (3000)
+acc_bound  = 1.0 #Actual bound (30)
+gyro_bound = 1.0 #Actual bound (2)
+mag_bound  = 1.0 #Actual bound (30)
+dt_bound   = 1.0 #Actual bound (0.1)
 custom_scale_matrix = np.asmatrix([gps_bound, gps_bound, acc_bound, acc_bound, acc_bound,  gyro_bound, gyro_bound, gyro_bound, mag_bound, mag_bound, dt_bound])
 custom_scale_matrix = np.concatenate((custom_scale_matrix, -custom_scale_matrix))
 x_scaler = MinMaxScaler()
@@ -719,10 +719,10 @@ print("\n###########################################################")
 print("######### Hyper-Parameters")
 print("###########################################################\n")
 
-seq_len         = 1700
+seq_len         = 170
 seq_offset      = int(seq_len/10)
 warmup_steps    = int(seq_len/40)
-batch_size      = 64
+batch_size      = 256
 print("Sequence Length: ", seq_len)
 print("Sequence Offset: ", seq_offset)
 
