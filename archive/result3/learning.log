@@ -29,8 +29,8 @@ READ GROUND TRUTH DATA FROM CACHE
 ######### Hyper-Parameters
 ###########################################################
 
-Sequence Length:  600
-Sequence Offset:  60
+Sequence Length:  3000
+Sequence Offset:  300
 
 ###########################################################
 ######### Training Data
@@ -45,18 +45,18 @@ Number of Testing Activities:  2
 ######### Training Sequences and Batches
 ###########################################################
 
-Training Data Consists of  8962  Unique Sequences of Length  600
-Testing Data Consists of   3172  Unique Sequences of Length  600
+Training Data Consists of  1754  Unique Sequences of Length  3000
+Testing Data Consists of   619  Unique Sequences of Length  3000
 
 Training Batch Size:  32
-Batches per Epoch:  281
+Batches per Epoch:  55
 
 ###########################################################
 ######### Validation Data
 ###########################################################
 
 
-Number of Validation Sequences:  951
+Number of Validation Sequences:  185
 
 ###########################################################
 ######### Model
@@ -84,17 +84,75 @@ Trainable params: 547,842
 Non-trainable params: 0
 _________________________________________________________________
 Epoch 1/40
-[2K[2K - 1548s - loss: 7.3527 - val_loss: 1.8327
+[2K[2K - 1204s - loss: 32.5241 - val_loss: 52.6200
 Epoch 2/40
-[2K[2K - 1551s - loss: 3.2904 - val_loss: 0.2369
+[2K[2K - 1205s - loss: 16.3512 - val_loss: 11.4300
 Epoch 3/40
-[2K[2K - 1535s - loss: 2.1026 - val_loss: 0.4137
+[2K[2K - 1192s - loss: 14.6892 - val_loss: 18.9406
 Epoch 4/40
-[2K[2K
-Epoch 00004: ReduceLROnPlateau reducing learning rate to 0.00010000000474974513.
- - 1526s - loss: 1.9889 - val_loss: 0.2600
+[2K[2K - 1214s - loss: 9.0923 - val_loss: 6.6396
 Epoch 5/40
-[2K[2K - 1530s - loss: 0.2511 - val_loss: 0.1073
+[2K[2K - 1175s - loss: 8.4936 - val_loss: 8.2117
 Epoch 6/40
-[2K[2K - 1528s - loss: 0.2410 - val_loss: 0.0998
+[2K[2K - 1185s - loss: 8.7206 - val_loss: 4.4136
 Epoch 7/40
+[2K[2K - 1188s - loss: 6.1729 - val_loss: 6.5282
+Epoch 8/40
+[2K[2K
+Epoch 00008: ReduceLROnPlateau reducing learning rate to 0.00010000000474974513.
+ - 1165s - loss: 7.3551 - val_loss: 8.5940
+Epoch 9/40
+[2K[2K - 1169s - loss: 1.9861 - val_loss: 1.0998
+Epoch 10/40
+[2K[2K - 1182s - loss: 0.6159 - val_loss: 0.9537
+Epoch 11/40
+[2K[2K - 1185s - loss: 0.5678 - val_loss: 0.9614
+Epoch 12/40
+[2K[2K
+Epoch 00012: ReduceLROnPlateau reducing learning rate to 1.0000000474974514e-05.
+ - 1184s - loss: 0.5655 - val_loss: 1.0884
+Epoch 13/40
+[2K[2K - 1193s - loss: 0.4363 - val_loss: 0.9125
+Epoch 14/40
+[2K[2K - 1164s - loss: 0.4162 - val_loss: 0.9253
+Epoch 15/40
+[2K[2K
+Epoch 00015: ReduceLROnPlateau reducing learning rate to 1.0000000656873453e-06.
+ - 1158s - loss: 0.4171 - val_loss: 0.9134
+Epoch 16/40
+[2K[2K - 1177s - loss: 0.4074 - val_loss: 0.9225
+Epoch 17/40
+[2K[2K
+Epoch 00017: ReduceLROnPlateau reducing learning rate to 1.0000001111620805e-07.
+ - 1186s - loss: 0.4054 - val_loss: 0.9200
+Epoch 00017: early stopping
+
+###########################################################
+######### Testing Data
+###########################################################
+
+Test Data
+1/1 [==============================] - 127s 127s/step
+loss (test-set): 0.4617616832256317
+Test Data
+1/1 [==============================] - 167s 167s/step
+loss (test-set): 1.409906268119812
+Plotting  mb0
+Accuracy of GPS:  8.118735040550984
+Accuracy of RNN:  8.655661443018204
+Plotting  uni1
+Accuracy of GPS:  14.19821065975769
+Accuracy of RNN:  20.194411901241118
+Plotting  uni
+Accuracy of GPS:  4.244203826619129
+Accuracy of RNN:  5.285596461239586
+Plotting  tutoring0
+Accuracy of GPS:  4.147782885750094
+Accuracy of RNN:  6.278372071569113
+Plotting  uni2
+Accuracy of GPS:  7.065320232180366
+Accuracy of RNN:  7.317984235700079
+Plotting  dog0
+Accuracy of GPS:  4.024814488360335
+Accuracy of RNN:  5.48887245716726
+Plotting  train0

@@ -724,7 +724,7 @@ print("\n###########################################################")
 print("######### Hyper-Parameters")
 print("###########################################################\n")
 
-seq_len         = 600
+seq_len         = 1200
 seq_offset      = int(seq_len/10)
 warmup_steps    = 5
 batch_size      = 32

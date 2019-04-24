@@ -724,9 +724,9 @@ print("\n###########################################################")
 print("######### Hyper-Parameters")
 print("###########################################################\n")
 
-seq_len         = 600
+seq_len         = 3000
 seq_offset      = int(seq_len/10)
-warmup_steps    = 5
+warmup_steps    = int(seq_len/40)
 batch_size      = 32
 print("Sequence Length: ", seq_len)
 print("Sequence Offset: ", seq_offset)
