@@ -704,7 +704,21 @@ y_scaler = y_scaler.fit(custom_scale_matrix[:, 0:2])
 # data = Data_Stream('run-harbour0', load_truth=True, higher_freq=False, no_cache=True)
 # # plt.plot(data.gps[:, 1], data.gps[:, 2])
 # # plt.show()
-
+# data = Data_Stream('asdaback0', load_truth=True, higher_freq=False, no_cache=True)
+# plt.plot(data.gps[:, 1], data.gps[:, 2])
+# plt.show()
+# data = Data_Stream('uni3', load_truth=True, higher_freq=False, no_cache=True)
+# plt.plot(data.gps[:, 1], data.gps[:, 2])
+# plt.show()
+# data = Data_Stream('cyc-tuto1', load_truth=True, higher_freq=False, no_cache=True)
+# plt.plot(data.gps[:, 1], data.gps[:, 2])
+# plt.show()
+# data = Data_Stream('cyc-tuto-rev1', load_truth=True, higher_freq=False, no_cache=True)
+# plt.plot(data.gps[:, 1], data.gps[:, 2])
+# plt.show()
+# data = Data_Stream('run-harbour0', load_truth=True, higher_freq=False, no_cache=True)
+# plt.plot(data.gps[:, 1], data.gps[:, 2])
+# plt.show()
 ###########################################################
 ################## CHOOSE TRAINING AND TESTING FILES
 ###########################################################

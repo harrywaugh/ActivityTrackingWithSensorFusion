@@ -92,3 +92,5 @@ Epoch 3/40
 Epoch 4/40
 [2K[2K - 1789s - loss: 1.8347 - val_loss: 0.2734
 Epoch 5/40
+[2K[2K - 1774s - loss: 1.9576 - val_loss: 0.8874
+Epoch 6/40
