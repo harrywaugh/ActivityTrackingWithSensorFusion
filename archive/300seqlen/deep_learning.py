@@ -730,7 +730,7 @@ print("\n###########################################################")
 print("######### Hyper-Parameters")
 print("###########################################################\n")
 
-seq_len         = 600
+seq_len         = 300
 seq_offset      = int(seq_len/10)
 warmup_steps    = 5
 batch_size      = 32
@@ -780,7 +780,7 @@ print("Batches per Epoch: ", str(batches_per_epoch))
 print("\n###########################################################")
 print("######### Validation Data")
 print("###########################################################\n")
-val_batch_size = int(0.45*x_test_seqs.shape[0])
+val_batch_size = int(0.35*x_test_seqs.shape[0])
 print("\nNumber of Validation Sequences: ", val_batch_size)
 val_generator = batch_generator(batch_size=val_batch_size, x_seqs=x_test_seqs, y_seqs=y_test_seqs)
 val_batch_x, val_batch_y = next(val_generator)
