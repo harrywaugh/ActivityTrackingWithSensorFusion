@@ -1,0 +1,203 @@
+
+###########################################################
+######### Loading Data
+###########################################################
+
+Parsing Data uni
+READ DATA FROM CACHE
+READ GROUND TRUTH DATA FROM CACHE
+Parsing Data tutoring0
+READ DATA FROM CACHE
+READ GROUND TRUTH DATA FROM CACHE
+Parsing Data uni2
+READ DATA FROM CACHE
+READ GROUND TRUTH DATA FROM CACHE
+Parsing Data dog0
+READ DATA FROM CACHE
+READ GROUND TRUTH DATA FROM CACHE
+Parsing Data uni3
+READ DATA FROM CACHE
+READ GROUND TRUTH DATA FROM CACHE
+Parsing Data train0
+READ DATA FROM CACHE
+READ GROUND TRUTH DATA FROM CACHE
+Parsing Data mb0
+READ DATA FROM CACHE
+READ GROUND TRUTH DATA FROM CACHE
+Parsing Data uni1
+READ DATA FROM CACHE
+READ GROUND TRUTH DATA FROM CACHE
+
+###########################################################
+######### Hyper-Parameters
+###########################################################
+
+Sequence Length:  300
+Sequence Offset:  30
+
+###########################################################
+######### Training Data
+###########################################################
+
+Training Activities:  6
+['uni', 'tutoring0', 'uni2', 'dog0', 'uni3', 'train0']
+Number of Testing Activities:  2
+['mb0', 'uni1']
+
+###########################################################
+######### Training Sequences and Batches
+###########################################################
+
+Training Data Consists of  21022  Unique Sequences of Length  300
+Testing Data Consists of   6364  Unique Sequences of Length  300
+
+Training Batch Size:  512
+Batches per Epoch:  42
+
+###########################################################
+######### Validation Data
+###########################################################
+
+
+Number of Validation Sequences:  2863
+
+###########################################################
+######### Model
+###########################################################
+
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+gru (GRU)                    (None, None, 32)          4320      
+_________________________________________________________________
+gru_1 (GRU)                  (None, None, 32)          6240      
+_________________________________________________________________
+gru_2 (GRU)                  (None, None, 32)          6240      
+_________________________________________________________________
+gru_3 (GRU)                  (None, None, 32)          6240      
+_________________________________________________________________
+gru_4 (GRU)                  (None, None, 32)          6240      
+_________________________________________________________________
+gru_5 (GRU)                  (None, None, 32)          6240      
+_________________________________________________________________
+gru_6 (GRU)                  (None, None, 32)          6240      
+_________________________________________________________________
+gru_7 (GRU)                  (None, None, 32)          6240      
+_________________________________________________________________
+gru_8 (GRU)                  (None, None, 32)          6240      
+_________________________________________________________________
+gru_9 (GRU)                  (None, None, 32)          6240      
+_________________________________________________________________
+dense (Dense)                (None, None, 2)           66        
+=================================================================
+Total params: 60,546
+Trainable params: 60,546
+Non-trainable params: 0
+_________________________________________________________________
+Epoch 1/40
+[2K[2K - 221s - loss: 73.2417 - val_loss: 11.7243
+Epoch 2/40
+[2K[2K - 221s - loss: 37.2351 - val_loss: 10.9540
+Epoch 3/40
+[2K[2K - 220s - loss: 21.0737 - val_loss: 8.3607
+Epoch 4/40
+[2K[2K - 218s - loss: 12.0896 - val_loss: 2.1595
+Epoch 5/40
+[2K[2K - 214s - loss: 9.0197 - val_loss: 4.0316
+Epoch 6/40
+[2K[2K
+Epoch 00006: ReduceLROnPlateau reducing learning rate to 0.00010000000474974513.
+ - 215s - loss: 10.6163 - val_loss: 6.2017
+Epoch 7/40
+[2K[2K - 218s - loss: 7.2540 - val_loss: 1.2911
+Epoch 8/40
+[2K[2K - 215s - loss: 2.7533 - val_loss: 1.1834
+Epoch 9/40
+[2K[2K - 213s - loss: 2.5414 - val_loss: 1.1304
+Epoch 10/40
+[2K[2K - 213s - loss: 2.4229 - val_loss: 1.0935
+Epoch 11/40
+[2K[2K - 217s - loss: 2.3101 - val_loss: 1.0382
+Epoch 12/40
+[2K[2K - 212s - loss: 2.2015 - val_loss: 1.0245
+Epoch 13/40
+[2K[2K - 210s - loss: 2.1022 - val_loss: 0.9871
+Epoch 14/40
+[2K[2K - 210s - loss: 2.0059 - val_loss: 0.9510
+Epoch 15/40
+[2K[2K - 211s - loss: 1.9176 - val_loss: 0.8850
+Epoch 16/40
+[2K[2K - 206s - loss: 1.8319 - val_loss: 0.8657
+Epoch 17/40
+[2K[2K - 209s - loss: 1.7478 - val_loss: 0.8298
+Epoch 18/40
+[2K[2K - 209s - loss: 1.6763 - val_loss: 0.8005
+Epoch 19/40
+[2K[2K - 211s - loss: 1.5984 - val_loss: 0.7675
+Epoch 20/40
+[2K[2K - 210s - loss: 1.5360 - val_loss: 0.7569
+Epoch 21/40
+[2K[2K - 208s - loss: 1.4783 - val_loss: 0.7401
+Epoch 22/40
+[2K[2K - 213s - loss: 1.4237 - val_loss: 0.7015
+Epoch 23/40
+[2K[2K - 210s - loss: 1.3585 - val_loss: 0.6878
+Epoch 24/40
+[2K[2K - 209s - loss: 1.3256 - val_loss: 0.7275
+Epoch 25/40
+[2K[2K
+Epoch 00025: ReduceLROnPlateau reducing learning rate to 1.0000000474974514e-05.
+ - 215s - loss: 1.3885 - val_loss: 0.7074
+Epoch 26/40
+[2K[2K - 210s - loss: 1.2625 - val_loss: 0.6421
+Epoch 27/40
+[2K[2K - 211s - loss: 1.2024 - val_loss: 0.6434
+Epoch 28/40
+[2K[2K
+Epoch 00028: ReduceLROnPlateau reducing learning rate to 1.0000000656873453e-06.
+ - 211s - loss: 1.1972 - val_loss: 0.6420
+Epoch 29/40
+[2K[2K - 212s - loss: 1.1937 - val_loss: 0.6403
+Epoch 30/40
+[2K[2K - 212s - loss: 1.1928 - val_loss: 0.6393
+Epoch 31/40
+[2K[2K - 215s - loss: 1.1930 - val_loss: 0.6388
+Epoch 32/40
+[2K[2K - 211s - loss: 1.1926 - val_loss: 0.6379
+Epoch 33/40
+[2K[2K - 209s - loss: 1.1916 - val_loss: 0.6386
+Epoch 34/40
+[2K[2K
+Epoch 00034: ReduceLROnPlateau reducing learning rate to 1.0000001111620805e-07.
+ - 211s - loss: 1.1917 - val_loss: 0.6383
+Epoch 35/40
+[2K[2K - 212s - loss: 1.1909 - val_loss: 0.6381
+Epoch 36/40
+[2K[2K
+Epoch 00036: ReduceLROnPlateau reducing learning rate to 1.000000082740371e-08.
+ - 213s - loss: 1.1904 - val_loss: 0.6383
+Epoch 00036: early stopping
+
+###########################################################
+######### Testing Data
+###########################################################
+
+Test Data
+1/1 [==============================] - 213s 213s/step
+loss (test-set): 0.985544741153717
+Test Data
+1/1 [==============================] - 282s 282s/step
+loss (test-set): 2.508601665496826
+Plotting  mb0
+Accuracy of GPS:  8.118735040550984
+Accuracy of RNN:  19.57959552405127
+Plotting  uni1
+Accuracy of GPS:  14.19821065975769
+Accuracy of RNN:  36.16967596740811
+Plotting  uni
+Accuracy of GPS:  4.244203826619129
+Accuracy of RNN:  14.503011364474146
+Plotting  tutoring0
+Accuracy of GPS:  4.147782885750094
+Accuracy of RNN:  9.748180831042255
+Plotting  uni2
