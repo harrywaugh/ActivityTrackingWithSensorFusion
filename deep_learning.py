@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib
 from matplotlib import pyplot as plt
+from DataStream import Data_Stream
 from scipy import integrate
 from scipy import interpolate
 import math
@@ -28,483 +29,6 @@ def measure_accuracy(ground_truth, test):
     diff_vectors = ground_truth - test
     accuracy = np.mean(np.linalg.norm(diff_vectors, ord = 2, axis = 1))
     return accuracy
-
-class GroundTruthGPX:
-    latlngs = np.asmatrix([0.0, 0.0])
-    def __init__(self, filename, gps, load_cache=False):
-#         if(load_cache):
-#             self.read_from_cache(filename)
-#             return
-        
-#         directory = 'Data/ground_truth/' + filename + '.gpx'
-#         ##Parse GT file
-#         f = open(directory, 'r')
-#         latlngs = []
-#         #Read Data from CSV
-#         for line in f:
-#             tags = [tag[6:] for tag in line.split("><") if tag[0]=='r']
-#             for tag in tags:
-#                 split_tag = tag.split('"')
-#                 if(len(split_tag)>1):
-#                     latlngs.append([float(split_tag[3]), float(split_tag[1])])
-#         self.latlngs= np.asmatrix(latlngs)
-#         self.dis = self.convert_longlat_to_dis(self.latlngs)
-
-#         ## Add  linear time to GPS, interpolated from start time to end time
-        
-#         time_vector = []
-#         indexes = []
-#         for position in self.dis:
-#             distances = gps[:, 1:3] - position
-#             magnitudes = np.linalg.norm(distances, ord = 2, axis = 1)
-#             indexes.append(np.argmin(magnitudes))
-#             time_vector.append([gps[indexes[-1], 0]])
-
-#         self.dis = np.concatenate((np.asmatrix(time_vector), self.dis), axis=1)
-#         self.dis[-1] = gps[-1, 0:3]  
-#         indexes[-1] = len(gps)
-        
-#         indexes.sort()
-#         previous_index = indexes[0]
-#         interpolated_positions = []
-#         for i in range(1, len(indexes)):
-#             n = indexes[i] - previous_index
-            
-#             if (n > 1):
-#                 a = self.dis[i-1]            
-#                 b = self.dis[i]
-#                 interpolated_positions.extend(self.interpolate(a, b, n))
-#             elif(n == 1):
-#                 interpolated_positions.append(self.dis[i])
-#             previous_index = indexes[i]
-        
-#         self.dis = np.squeeze(np.asarray(interpolated_positions))
-#         latlngs = np.asmatrix([0.0, 0.0])
-
-        
-#         print(len(gps))
-#         print(len(self.dis))
-        if(load_cache):
-            self.read_from_cache(filename)
-            return
-        
-        directory = 'Data/ground_truth/' + filename + '.gpx'
-        ##Parse GT file
-        f = open(directory, 'r')
-        latlngs = []
-
-        for line in f:
-            tags = [tag[6:] for tag in line.split("><") if tag[0]=='r']
-            for tag in tags:
-                split_tag = tag.split('"')
-                if(len(split_tag)>1):
-                    latlngs.append([float(split_tag[3]), float(split_tag[1])])
-        self.latlngs= np.asmatrix(latlngs)
-        
-        lin_time = np.asmatrix(np.linspace(0, gps[-1, 0], len(self.latlngs))).T
-        self.latlngs = np.concatenate((lin_time, self.latlngs), axis=1)
-        irreg_var = self.latlngs
-        reg_varX = np.asmatrix(np.interp(gps[:, 0], np.ravel(irreg_var[:,0]), np.ravel(irreg_var[:,1])))
-        reg_varY = np.asmatrix(np.interp(gps[:, 0], np.ravel(irreg_var[:,0]), np.ravel(irreg_var[:,2])))
-        self.latlngs = np.concatenate((reg_varX, reg_varY), axis=1)
-        
-        
-        
-        self.dis = self.convert_longlat_to_dis(self.latlngs)
-        self.dis = np.concatenate((gps[:, 0], self.dis), axis=1)
-        
-        self.correct_ground_truth(self.dis[:, 1:3], gps[:,1:3])
-        print(len(self.dis))
-        self.dis = np.concatenate((gps[:, 0], self.dis), axis=1)
-        
-        print("Aligned Ground Truth")
-        
-    def interpolate(self, a, b, n):
-        interp_points = []
-        for i in range (n):
-            interp_points.append(a + ((b - a) * (float(i))) / (n-1))
-        return interp_points
-          
-    def convert_longlat_to_dis(self, gps):
-        dis_list = [[0.0, 0.0]]
-        start_gps = gps[0]
-        for i in range(1, gps.shape[0]):
-            dis_list.append([self.get_arc_len(start_gps[0, 0], gps[i, 0]),
-                             self.get_arc_len(start_gps[0, 1], gps[i, 1])])
-        return np.asmatrix(dis_list)
-    
-    def get_arc_len(self, deg1, deg2):
-        delta_theta = deg2 - deg1
-        delta_theta = ((delta_theta+180)%360)-180
-        earth_R = 6378100
-        return 2.0*math.pi*earth_R*delta_theta/360.0
-    
-    def correct_ground_truth(self, ground_truth, gps):
-        ## Function that identifies the closest ground truth point for a given sensor reading
-        def closest_ground_truth_point(x):
-            ## Check every 200 steps
-#             check_step = 300
-            ground_truth_steps = ground_truth
-            ## Get a vector, that represents the distance to all ground truth points
-            distance_vectors = ground_truth_steps - x
-            ## Get the magnitude, and thus identify the index with the minimum distance
-            magnitudes = np.linalg.norm(distance_vectors, ord = 2, axis = 1)
-            min_step_index = np.argmin(magnitudes)
-            
-            
-#             ## Check points around close point
-#             lower_bound = max(0,                   int(min_step_index*check_step - (check_step/2)))
-#             upper_bound = min(len(ground_truth)-1, int(min_step_index*check_step + (check_step/2)))
-#             neighbours = ground_truth[lower_bound : upper_bound]
-            
-#             ##Create distance vector, get magintudes and get closest two points
-#             distance_vectors = neighbours - x
-#             magnitudes = np.linalg.norm(distance_vectors, ord = 2, axis = 1)
-#             minimum_neighbour = np.argmin(magnitudes)
-        
-            return ground_truth_steps[min_step_index]
-        
-        for i in range(len(gps)):
-            ground_truth[i] = closest_ground_truth_point(gps[i])
-        self.dis = ground_truth
-        
-    def read_from_cache(self, filename):
-        self.dis = self.read_var_from_cache(filename, "dis")
-#         self.latlngs = self.read_var_from_cache(filename, "latlng")
-        print("READ GROUND TRUTH DATA FROM CACHE")
-        
-    def read_var_from_cache(self, filename, var_name):
-        f=open('Data/ground_truth/cache/'+var_name+'/'+filename+'.csv',"r")
-        var=[]
-        for line in f:
-            split = line.split(',')
-            var.append([float(split[0]), float(split[1]), float(split[2])])
-        f.close()
-        return np.asmatrix(var)
-    
-    def write_to_cache(self, filename):
-        self.write_var_to_cache(filename, "dis", self.dis)
-#         self.write_var_to_cache(filename, "latlng", self.latlngs)
-        print("WRITTEN GROUND TRUTH DATA TO CACHE")
-    
-    def write_var_to_cache(self, filename, var_name, data):
-        f=open('Data/ground_truth/cache/'+var_name+'/'+filename+'.csv',"w+")
-        for entry in data:
-            line = str(entry[0, 0])+','+str(entry[0, 1])+','+str(entry[0, 2])+'\n'            
-#             line = str(entry[0])+','+str(entry[1])+','+str(entry[2])+'\n'
-
-            f.write(line)
-        f.close()
-        
-    
-class Data_Stream:
-    gps_latlng = np.asmatrix([0.0, 0.0, 0.0, 0.0])
-    gps = np.asmatrix([0.0, 0.0, 0.0, 0.0])
-    kal_dis = np.asmatrix([0.0, 0.0, 0.0, 0.0])
-    kal_latlng = np.asmatrix([0.0, 0.0, 0.0, 0.0])
-    
-    rot_vec = np.asmatrix([0.0, 0.0, 0.0, 0.0])
-    mag = np.asmatrix([0.0, 0.0, 0.0, 0.0])
-    gyro = np.asmatrix([0.0, 0.0, 0.0, 0.0])
-    acc_with_grav = np.asmatrix([0.0, 0.0, 0.0, 0.0])
-    
-    acc_DRC = np.asmatrix([0.0, 0.0, 0.0, 0.0])
-    vel_DRC = np.asmatrix([0.0, 0.0, 0.0, 0.0])
-    dis_DRC = np.asmatrix([0.0, 0.0, 0.0, 0.0])
-
-    acc_ERC = np.asmatrix([0.0, 0.0, 0.0, 0.0])
-    vel_ERC = np.asmatrix([0.0, 0.0, 0.0, 0.0])
-    dis_ERC = np.asmatrix([0.0, 0.0, 0.0, 0.0])
-    
-        
-    def __init__(self, filename, invert=False, load_truth=False, higher_freq=False, no_cache=False):
-        print("Parsing Data "+ filename)
-        
-        if((not no_cache) and os.path.exists('Data/streams/cache/acc/'+filename+'.csv')):
-            self.read_from_cache(filename)
-            self.ground_truth = GroundTruthGPX(filename, self.gps, load_cache=True)
-            return
-        
-        
-        self.var_codes = {1.0 : [], 82.0 : [], 84.0 : [], 3.0 : [], 4.0 : [], 5.0 : []}
-        directory = 'Data/streams/' + filename +".csv"
-        ##Parse file
-        f=open(directory, "r")
-        start_time = False
-        for line in f:
-            line = line.split(',')
-            if(start_time == False):
-                start_time = float(line[0])
-            self.process_csv_line(start_time, line)
-        self.var_codes[1.0] = np.delete(self.var_codes.get(1.0), (0), axis=0) #GPS cant be (0 0 0 0) at init
-        for key, value in self.var_codes.items():
-            self.var_codes[key] = np.asmatrix(value)
-        
-        self.var_codes[13.0] = self.var_codes[1.0]
-        self.var_codes[1.0]  = self.swap_xy(self.var_codes[1.0])
-        self.var_codes[13.0] = self.swap_xy(self.var_codes[13.0])
-        
-        ##Convert longitude and latitutde of GPS sensor to meters
-        self.var_codes[1.0] = self.convert_longlat_to_dis(self.var_codes.get(1.0))
-        
-        ##Print Frequency of Acceleration, and Lin. Acceleration
-        time_period = np.mean(np.diff(self.var_codes[3.0].T))
-        frequency = 1/time_period
-        print("Freq. of Acceleration", frequency)
-        time_period = np.mean(np.diff(self.var_codes[82.0].T))
-        frequency = 1/time_period
-        print("Freq. of Lin. Acceleration", frequency)        
-        
-        
-        ##Interpolate rotation and acceleration so that they occur at the same time step
-        if(higher_freq):
-            new_time = self.var_codes.get(3.0)[:, 0] # Set timesteps to be that of the acceleration, as it has most readings
-            
-        else:
-            new_time = self.var_codes.get(82.0)[:, 0] # Set timesteps to be that of the acceleration, as it has most readings
-            
-        
-        for key, value in self.var_codes.items():
-            irreg_var = value
-            reg_varX = np.asmatrix(np.interp(new_time, np.ravel(irreg_var[:,0]), np.ravel(irreg_var[:,1])))
-            reg_varY = np.asmatrix(np.interp(new_time, np.ravel(irreg_var[:,0]), np.ravel(irreg_var[:,2])))
-            reg_varZ = np.asmatrix(np.interp(new_time, np.ravel(irreg_var[:,0]), np.ravel(irreg_var[:,3])))
-            self.var_codes[key] = np.concatenate((new_time, reg_varX, reg_varY, reg_varZ), axis=1)
-        print("Interpolated Samples")
-        
-        
-        
-        
-        
-        ##Set class members to matrices read from csv
-        self.acc_DRC = self.var_codes.get(82.0)
-        self.rot_vec = self.var_codes.get(84.0)
-        self.gyro = self.var_codes.get(4.0)
-        self.mag = self.var_codes.get(5.0)
-        self.acc_with_grav = self.var_codes.get(3.0)
-        self.gps = self.var_codes.get(1.0)
-        self.gps_latlng = self.var_codes.get(13.0)
-        
-        # If device axis is wrong, invert data
-        self.invert_acceleration()
-        
-        ##Use rotation vectors to achieve acceleration in ERC
-        self.acc_with_grav_ERC = self.rotate_acceleration(self.rot_vec, self.acc_with_grav)
-        self.acc_ERC = self.rotate_acceleration(self.rot_vec, self.acc_DRC)
-
-        
-        print("Rotated Acceleration")
-        
-        if(not higher_freq):
-            self.integrate_variables()
-            print("Integrated Acceleration")
-
-        
-        ##Load ground truth if there is one
-        if(load_truth):
-            self.ground_truth = GroundTruthGPX(filename, self.var_codes.get(1.0)[:, 0:3])
-            print("Loaded Ground Truth")
-            
-        print("Finished Dataset "+filename+"\n")
-        
-        self.write_to_cache(filename)
-        self.ground_truth.write_to_cache(filename)
-        
-        
-    def read_from_cache(self, filename):
-        self.acc_with_grav_ERC = self.read_var_from_cache(filename, "acc")
-        self.acc_ERC = self.read_var_from_cache(filename, "lin-acc")
-        self.gyro = self.read_var_from_cache(filename, "gyro")
-        self.mag = self.read_var_from_cache(filename, "mag")
-        self.gps = self.read_var_from_cache(filename, "dis")
-        self.gps_latlng = self.read_var_from_cache(filename, "latlng")
-        print("READ DATA FROM CACHE")
-        
-    def read_var_from_cache(self, filename, var_name):
-        f=open('Data/streams/cache/'+var_name+'/'+filename+'.csv',"r")
-        var=[]
-        for line in f:
-            split = line.split(',')
-            var.append([float(split[0]), float(split[1]), float(split[2]), float(split[3])])
-        f.close()
-        return np.asmatrix(var)
-    
-    def write_to_cache(self, filename):
-        self.write_var_to_cache(filename, "acc", self.acc_with_grav_ERC)
-        self.write_var_to_cache(filename, "lin-acc", self.acc_ERC)
-        self.write_var_to_cache(filename, "gyro", self.gyro)
-        self.write_var_to_cache(filename, "mag", self.mag)
-        self.write_var_to_cache(filename, "dis", self.gps)
-        self.write_var_to_cache(filename, "latlng", self.gps_latlng)
-        print("WRITTEN DATA TO CACHE")
-    
-    def write_var_to_cache(self, filename, var_name, data):
-        f=open('Data/streams/cache/'+var_name+'/'+filename+'.csv',"w+")
-        for entry in data:
-            line = str(entry[0, 0])+','+str(entry[0,1])+','+str(entry[0, 2])+','+str(entry[0, 3])+'\n'
-            f.write(line)
-        f.close() 
-        
-        
-        
-    def invert_acceleration(self):
-        self.acc_DRC[:, 1:3] *= -1
-        self.acc_with_grav[:, 1:3] *= -1
-    
-    def process_csv_line(self, start_time, line):
-        i = 1
-        while(i < len(line)):
-            if(float(line[i]) in self.var_codes):
-                self.var_codes[float(line[i])].append([float(line[0])-start_time, 
-                                                       float(line[i+1]), float(line[i+2]), float(line[i+3])])
-            if(float(line[i]) == 8.0):
-                i+=2
-            else :
-                i+=4
-                
-    def integrate_variable(self, var):
-        return np.concatenate((self.acc_DRC[:,0], integrate.cumtrapz(var[:,1:4], initial=0, axis=0)), axis=1)
-    
-    def integrate_variables(self):
-        self.vel_DRC = self.integrate_variable(self.acc_DRC)
-        self.dis_DRC = self.integrate_variable(self.vel_DRC)
-        
-        self.vel_ERC = self.integrate_variable(self.acc_ERC)
-        self.dis_ERC = self.integrate_variable(self.vel_ERC)
-        
-    def rotate_acceleration(self, rot_vectors, acc_vectors):
-        acc_ERC = acc_vectors[:, 0]
-        acc_vectors = acc_vectors[:, 1:4].T
-        acc_ERC_list=[]
-        for i in range(len(rot_vectors[:, 0])):
-            rot_matrix_inv = self.get_rotation_matrix(rot_vectors[i, 1:4]) #Orthogonal so transpose is inverse
-            acc_ERC_list.append(np.matmul(rot_matrix_inv, acc_vectors[:, i]))        
-
-        return np.concatenate((acc_ERC, np.concatenate(acc_ERC_list, axis=1).T), axis=1)
-    
-    def get_rotation_matrix(self, rot_vec):
-        qx = rot_vec[0, 0]
-        qy = rot_vec[0, 1]
-        qz = rot_vec[0, 2]
-        qw = 1 - qx**2 - qy**2 - qz**2
-        rot_matrix = [[1-2*qy**2-2*qz**2, 2*qx*qy-2*qz*qw, 2*qx*qz+2*qy*qw]]
-        rot_matrix.append([2*qx*qy+2*qz*qw,  1-2*qx**2-2*qz**2, 2*qy*qz-2*qx*qw])
-        rot_matrix.append([2*qx*qz-2*qy*qw, 2*qy*qz+2*qx*qw, 1-2*qx**2-2*qy**2])
-        return rot_matrix
-    
-    def swap_xy(self, gps):
-        swapped = []
-        for i in range(0, gps.shape[0]-1):
-            swapped.append(np.asmatrix([
-                                gps[i, 0],
-                                gps[i, 2],
-                                gps[i, 1],
-                                gps[i, 3]]))
-        return np.concatenate(swapped)
-    
-    def convert_longlat_to_dis(self, gps):
-        dis_list = [[gps[0, 0], 0.0, 0.0, gps[0, 3]]]
-        start_gps = gps[0]
-        for i in range(1, gps.shape[0]-1):
-            dis_list.append([gps[i, 0],
-                            self.get_arc_len(start_gps[0, 1], gps[i, 1]),
-                            self.get_arc_len(start_gps[0, 2], gps[i, 2]),
-                            gps[i, 3]])
-        return np.asmatrix(dis_list)
-    
-    def get_arc_len(self, deg1, deg2):
-        delta_theta = deg2 - deg1
-        delta_theta = ((delta_theta+180)%360)-180
-        earth_R = 6378100
-        return 2.0*math.pi*earth_R*delta_theta/360.0
-    
-    def init_kalman(self, xks, reverse=False):
-        latlng_list= []
-        earth_R = 6378100
-        s_lat = self.gps_latlng[0, 2]
-        s_lng = self.gps_latlng[0, 1]
-        
-        lngs = 360.0*xks[:, 0]/(2.0*math.pi*earth_R)+s_lng
-        lats = 360.0*xks[:, 1]/(2.0*math.pi*earth_R)+s_lat
-        kal_latlng = np.concatenate((self.gps[:, 0], lngs, lats, self.gps[:, 3]), axis=1)
-        if(reverse):
-            self.kal_latlng_reverse = kal_latlng[::-1]
-            self.kal_dis_reverse = np.concatenate((self.gps[:, 0], xks[:, 0:2], self.gps[:, 3]), axis=1)[::-1]
-            
-        else:
-            self.kal_latlng = kal_latlng
-            self.kal_dis = np.concatenate((self.gps[:, 0], xks[:, 0:2], self.gps[:, 3]), axis=1)
-            
-    
-    def plot(self):
-        # Graph the variables.
-        plt.figure(figsize=(9, 20))
-        ax=plt.subplot(521)
-        plt.plot(self.acc_DRC[:, 0], self.acc_DRC[:, 1], 'r-', lw=1, label='X')
-        plt.plot(self.acc_DRC[:, 0], self.acc_DRC[:, 2], 'b-', lw=1, label='Y')
-        plt.plot(self.acc_DRC[:, 0], self.acc_DRC[:, 3], 'g-', lw=1, label='Z')
-        plt.title("Acceleration - DRC")
-        ax.legend()
-
-        ax=plt.subplot(522)
-        plt.plot(self.acc_ERC[:, 0], self.acc_ERC[:, 1], 'r-', lw=1, label='X')
-        plt.plot(self.acc_ERC[:, 0], self.acc_ERC[:, 2], 'b-', lw=1, label='Y')
-        plt.plot(self.acc_ERC[:, 0], self.acc_ERC[:, 3], 'g-', lw=1, label='Z')
-        plt.title("Acceleration - ERC")
-        ax.legend()
-
-        ax=plt.subplot(523)
-        plt.plot(self.vel_DRC[:, 0], self.vel_DRC[:, 1], 'r-', lw=1, label='X')
-        plt.plot(self.vel_DRC[:, 0], self.vel_DRC[:, 2], 'b-', lw=1, label='Y')
-        plt.plot(self.vel_DRC[:, 0], self.vel_DRC[:, 3], 'g-', lw=1, label='Z')
-        plt.title("Velocity - DRC")
-        ax.legend()
-
-        ax=plt.subplot(524)
-        plt.plot(self.vel_ERC[:, 0], self.vel_ERC[:, 1], 'r-', lw=1, label='X')
-        plt.plot(self.vel_ERC[:, 0], self.vel_ERC[:, 2], 'b-', lw=1, label='Y')
-        plt.plot(self.vel_ERC[:, 0], self.vel_ERC[:, 3], 'g-', lw=1, label='Z')
-        plt.title("Velocity - ERC")
-        ax.legend()
-
-        ax=plt.subplot(525)
-        plt.plot(self.dis_DRC[:, 0], self.dis_DRC[:, 1], 'r-', lw=1, label='X')
-        plt.plot(self.dis_DRC[:, 0], self.dis_DRC[:, 2], 'b-', lw=1, label='Y')
-        plt.plot(self.dis_DRC[:, 0], self.dis_DRC[:, 3], 'g-', lw=1, label='Z')
-        plt.title("Displacement - DRC")
-        ax.legend()
-
-        ax=plt.subplot(526)
-        plt.plot(self.dis_ERC[:, 0], self.dis_ERC[:, 1], 'r-', lw=1, label='X')
-        plt.plot(self.dis_ERC[:, 0], self.dis_ERC[:, 2], 'b-', lw=1, label='Y')
-        plt.plot(self.dis_ERC[:, 0], self.dis_ERC[:, 3], 'g-', lw=1, label='Z')
-        plt.title("Displacement - ERC")
-        ax.legend()
-
-        ax=plt.subplot(527)
-        plt.plot(self.gyro[:, 0], self.gyro[:, 1], 'r-', lw=1, label='X')
-        plt.plot(self.gyro[:, 0], self.gyro[:, 2], 'b-', lw=1, label='Y')
-        plt.plot(self.gyro[:, 0], self.gyro[:, 3], 'g-', lw=1, label='Z')
-        plt.title("Gyroscope")
-        ax.legend()
-
-        ax=plt.subplot(528)
-        plt.plot(self.mag[:, 0], self.mag[:, 1], 'r-', lw=1, label='X')
-        plt.plot(self.mag[:, 0], self.mag[:, 2], 'b-', lw=1, label='Y')
-        plt.plot(self.mag[:, 0], self.mag[:, 3], 'g-', lw=1, label='Z')
-        plt.title("Magnetometer")
-        ax.legend()
-
-        ax=plt.subplot(529)
-        plt.plot(self.gps_latlng[:, 1], self.gps_latlng[:, 2], 'r-', lw=1, label='X')
-        plt.title("GPS Lat Lng") ##Proof that values are reversed, should be -9.8 its 9.8
-        ax.legend()
-
-        ax=plt.subplot(5, 2, 10)
-        plt.plot(self.gps[:, 1], self.gps[:, 2], 'r-', lw=1, label='X')
-        plt.title("GPS Displacements") ##Proof that values are reversed, should be -9.8 its 9.8
-        ax.legend()
-    
 
 def create_input_and_output(data, just_acc=False, higher_freq=True):
     ## Needed Data
@@ -538,8 +62,6 @@ def load_datasets(files, higher_freq=True, no_cache=False):
         training_datasets.append([input_data, ground_truth])
     return training_datasets
 
-
-
 def scale_dataset(training_dataset, test_dataset):
     scaled_training_dataset = []
     scaled_test_dataset = []
@@ -553,7 +75,6 @@ def scale_dataset(training_dataset, test_dataset):
     
     return scaled_training_dataset, scaled_test_dataset
     
-
 def get_seqs(sequence_length, dataset, offset):
     
     x_seqs = []
@@ -690,6 +211,13 @@ def plot_dataset(dataset, seq_len=100, filenames=[]):
         print("Accuracy of RNN: ", measure_accuracy(ground_truth, predicted_output))
         count+=1
 
+
+
+
+
+
+
+
 x_dim      = 12
 y_dim      = 2
 gps_bound  = 3000.0 #Actual bound (3000)
@@ -818,7 +346,11 @@ model.add(Dense(y_dim, activation='linear'))
 optimizer = Adam(lr=1e-3)
 model.compile(loss=custom_loss, optimizer=optimizer)
 model.summary()
-
+# model = Sequential()
+# model.add(Bidirectional(GRU(units=256, return_sequences=True), merge_mode='ave',input_shape=(None, x_dim,)))
+# model.add(Bidirectional(GRU(units=256, return_sequences=True), merge_mode='ave',input_shape=(None, x_dim,)))
+# model.add(Bidirectional(GRU(units=256, return_sequences=True), merge_mode='ave',input_shape=(None, x_dim,)))
+# model.add(Dense(y_dim, activation='linear'))
 
 ###########################################################
 ################## CREATE CALLBACK and TRAIN MODEL
