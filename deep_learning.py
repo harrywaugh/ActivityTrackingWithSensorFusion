@@ -255,8 +255,8 @@ running_files = ['run-harbour0','run-john0']
 walking_files = ['uni', 'uni1','uni2','uni3', 'mb0', 'tutoring0', 'dog0', 'train0']
 
 
-training_files = ['uni', 'uni1','uni2', 'tutoring0', 'dog0', 'train0']
-testing_files  = ['uni3', 'mb0']
+training_files = ['uni','uni2', 'tutoring0', 'dog0', 'train0', 'mb0']
+testing_files  = ['uni3', 'uni1']
 training_dataset = load_datasets(training_files, higher_freq=False, no_cache=False)
 testing_dataset = load_datasets(testing_files, higher_freq=False, no_cache=False)
 scaled_training_dataset, scaled_testing_dataset = scale_dataset(training_dataset, testing_dataset)
@@ -275,9 +275,9 @@ print("######### Hyper-Parameters")
 print("###########################################################\n")
 
 seq_len         = 300
-seq_offset      = int(seq_len/10)
+seq_offset      = int(seq_len/20)
 warmup_steps    = 5
-batch_size      = 64
+batch_size      = 32
 print("Sequence Length: ", seq_len)
 print("Sequence Offset: ", seq_offset)
 
@@ -324,7 +324,7 @@ print("Batches per Epoch: ", str(batches_per_epoch))
 print("\n###########################################################")
 print("######### Validation Data")
 print("###########################################################\n")
-val_batch_size = int(0.45*x_test_seqs.shape[0])
+val_batch_size = int(0.75*x_test_seqs.shape[0])
 print("\nNumber of Validation Sequences: ", val_batch_size)
 val_generator = batch_generator(batch_size=val_batch_size, x_seqs=x_test_seqs, y_seqs=y_test_seqs)
 val_batch_x, val_batch_y = next(val_generator)
