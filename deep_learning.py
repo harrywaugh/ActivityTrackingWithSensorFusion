@@ -255,8 +255,8 @@ running_files = ['run-harbour0','run-john0']
 walking_files = ['uni', 'uni1','uni2','uni3', 'mb0', 'tutoring0', 'dog0', 'train0']
 
 
-training_files = ['uni','uni2', 'tutoring0', 'dog0', 'train0', 'mb0']
-testing_files  = ['uni3', 'uni1']
+training_files = ['uni','uni2', 'tutoring0', 'dog0', 'uni1', 'train0' ]
+testing_files  = ['uni3', 'mb0']
 training_dataset = load_datasets(training_files, higher_freq=False, no_cache=False)
 testing_dataset = load_datasets(testing_files, higher_freq=False, no_cache=False)
 scaled_training_dataset, scaled_testing_dataset = scale_dataset(training_dataset, testing_dataset)
@@ -275,9 +275,9 @@ print("######### Hyper-Parameters")
 print("###########################################################\n")
 
 seq_len         = 300
-seq_offset      = int(seq_len/20)
+seq_offset      = int(seq_len/300)
 warmup_steps    = 5
-batch_size      = 32
+batch_size      = 256
 print("Sequence Length: ", seq_len)
 print("Sequence Offset: ", seq_offset)
 
