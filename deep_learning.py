@@ -195,20 +195,20 @@ def plot_dataset(dataset, seq_len=100, filenames=[]):
     #         ground_truth = ground_truth[:]
     #         orig_gps = orig_gps[:]
         predicted_output = y_scaler.inverse_transform(predicted_output[0])[seq_len:]
-
+        warm_up=30
         ##Print Graphs of X against Y
         plt.figure(figsize=(8,5))
-        plt.plot(ground_truth[:, 0], ground_truth[:, 1], label='ground truth', color = 'g')
-        plt.plot(predicted_output[:, 0], predicted_output[:, 1], label='seen training data', color = 'b')
-        plt.plot(orig_gps[:, 0], orig_gps[:,1], label='original gps', color = 'r')
+        plt.plot(ground_truth[warm_up:-warm_up, 0], ground_truth[warm_up:-warm_up, 1], label='ground truth', color = 'g')
+        plt.plot(predicted_output[warm_up:-warm_up, 0], predicted_output[warm_up:-warm_up, 1], label='seen training data', color = 'b')
+        plt.plot(orig_gps[warm_up:-warm_up, 0], orig_gps[warm_up:-warm_up,1], label='original gps', color = 'r')
         plt.legend()
         plt.xlabel('Position X (Metres)')
         plt.ylabel('Position Y (Metres)')
         plt.savefig(str(filenames[count])+".pdf", bbox_inches = 'tight', pad_inches = 0)
         plt.show()
 
-        print("Accuracy of GPS: ", measure_accuracy(ground_truth, orig_gps))
-        print("Accuracy of RNN: ", measure_accuracy(ground_truth, predicted_output))
+        print("Accuracy of GPS: ", measure_accuracy(ground_truth[warm_up:-warm_up], orig_gps[warm_up:-warm_up]))
+        print("Accuracy of RNN: ", measure_accuracy(ground_truth[warm_up:-warm_up], predicted_output[warm_up:-warm_up]))
         count+=1
 
 
@@ -252,11 +252,11 @@ print("###########################################################\n")
 cycling_files = ['cyc-asda0', 'cyc-asda-rev0', 'cyc-bro0', 'cyc-bro-rev0',  'cyc-tuto0', 'cyc-tuto-rev0', 'cyc-tuto1', 'cyc-tuto-rev1', 'cyc-tuto2', 'cyc-tuto-rev2']
 
 running_files = ['run-harbour0','run-john0']
-walking_files = ['uni', 'uni1','uni2','uni3', 'mb0', 'tutoring0', 'train0', 'dog0']
+walking_files = ['uni', 'uni1','uni2','uni3', 'mb0', 'tutoring0', 'dog0', 'train0']
 
 
-training_files = ['cyc-asda0', 'cyc-asda-rev0', 'cyc-bro-rev0', 'cyc-tuto-rev0', 'cyc-tuto1', 'cyc-tuto-rev1', 'cyc-tuto2', 'cyc-tuto-rev2']
-testing_files  = ['cyc-bro0',  'cyc-tuto0']
+training_files = ['uni','uni2', 'tutoring0', 'dog0', 'train0', 'mb0']
+testing_files  = ['uni3', 'uni1']
 training_dataset = load_datasets(training_files, higher_freq=False, no_cache=False)
 testing_dataset = load_datasets(testing_files, higher_freq=False, no_cache=False)
 scaled_training_dataset, scaled_testing_dataset = scale_dataset(training_dataset, testing_dataset)
@@ -275,9 +275,9 @@ print("######### Hyper-Parameters")
 print("###########################################################\n")
 
 seq_len         = 300
-seq_offset      = int(seq_len/10)
+seq_offset      = int(seq_len/20)
 warmup_steps    = 5
-batch_size      = 64
+batch_size      = 32
 print("Sequence Length: ", seq_len)
 print("Sequence Offset: ", seq_offset)
 
@@ -324,7 +324,7 @@ print("Batches per Epoch: ", str(batches_per_epoch))
 print("\n###########################################################")
 print("######### Validation Data")
 print("###########################################################\n")
-val_batch_size = int(0.45*x_test_seqs.shape[0])
+val_batch_size = int(0.75*x_test_seqs.shape[0])
 print("\nNumber of Validation Sequences: ", val_batch_size)
 val_generator = batch_generator(batch_size=val_batch_size, x_seqs=x_test_seqs, y_seqs=y_test_seqs)
 val_batch_x, val_batch_y = next(val_generator)
@@ -342,15 +342,13 @@ sess = tf.InteractiveSession()
 model = Sequential()
 model.add(GRU(units=128, return_sequences=True, input_shape=(None, x_dim,)))
 model.add(GRU(units=128, return_sequences=True, input_shape=(None, x_dim,)))
+# model.add(Bidirectional(GRU(units=128, return_sequences=True), merge_mode='ave', input_shape=(None, x_dim,)))
+# model.add(Bidirectional(GRU(units=128, return_sequences=True), merge_mode='ave', input_shape=(None, x_dim,)))
 model.add(Dense(y_dim, activation='linear'))
 optimizer = Adam(lr=1e-4)
 model.compile(loss=custom_loss, optimizer=optimizer)
 model.summary()
-# model = Sequential()
-# model.add(Bidirectional(GRU(units=256, return_sequences=True), merge_mode='ave',input_shape=(None, x_dim,)))
-# model.add(Bidirectional(GRU(units=256, return_sequences=True), merge_mode='ave',input_shape=(None, x_dim,)))
-# model.add(Bidirectional(GRU(units=256, return_sequences=True), merge_mode='ave',input_shape=(None, x_dim,)))
-# model.add(Dense(y_dim, activation='linear'))
+
 
 ###########################################################
 ################## CREATE CALLBACK and TRAIN MODEL
@@ -358,8 +356,9 @@ model.summary()
 # path_checkpoint = 'RNN.checkpoint'
 # callback_checkpoint = ModelCheckpoint(filepath=path_checkpoint, monitor='val_loss', verbose=1, save_weights_only=True, save_best_only=True)
 # callback_tensorboard = TensorBoard(log_dir='./23_logs/', histogram_freq=0, write_graph=False)
-callback_early_stopping = EarlyStopping(monitor='val_loss', patience=6, verbose=1)
-callback_reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.05, min_lr=1e-9, patience=4, verbose=1)      
+
+callback_early_stopping = EarlyStopping(monitor='val_loss', patience=4, verbose=1)
+callback_reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.05, min_lr=1e-9, patience=2, verbose=1)      
 plot_losses = PlotLosses()
 callbacks = [callback_early_stopping, plot_losses, callback_reduce_lr]
 generator = batch_generator(batch_size=batch_size, x_seqs=x_train_seqs, y_seqs=y_train_seqs)
