@@ -22,6 +22,8 @@ from tensorflow.python.keras.models import Sequential
 from tensorflow.python.keras.utils import multi_gpu_model
 from tensorflow.python.keras.layers import Input, Dense, GRU, Embedding, Bidirectional, LSTM
 from tensorflow.python.keras.optimizers import RMSprop, Adam
+import gmaps
+import gmaps.datasets
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 
@@ -209,6 +211,14 @@ def plot_dataset(dataset, seq_len=100, filenames=[]):
 
         print("Accuracy of GPS: ", measure_accuracy(ground_truth[warm_up:-warm_up], orig_gps[warm_up:-warm_up]))
         print("Accuracy of RNN: ", measure_accuracy(ground_truth[warm_up:-warm_up], predicted_output[warm_up:-warm_up]))
+        
+        
+        f=open(str(filenames[count])+'.csv',"w+")
+        for entry in predicted_output:
+            line = str(entry[0])+','+str(entry[1])+'\n'
+            f.write(line)
+        f.close() 
+        
         count+=1
 
 
@@ -233,12 +243,12 @@ y_scaler = MinMaxScaler()
 y_scaler = y_scaler.fit(custom_scale_matrix[:, 0:2])
 
 
-data = Data_Stream('tut0', load_truth=True, higher_freq=False, no_cache=True)
-plt.plot(data.gps[:, 1], data.gps[:, 2])
-plt.show()
-data = Data_Stream('tut-rev0', load_truth=True, higher_freq=False, no_cache=True)
-plt.plot(data.gps[:, 1], data.gps[:, 2])
-plt.show()
+# data = Data_Stream('tut0', load_truth=True, higher_freq=False, no_cache=True)
+# plt.plot(data.gps[:, 1], data.gps[:, 2])
+# plt.show()
+# data = Data_Stream('tut-rev0', load_truth=True, higher_freq=False, no_cache=True)
+# plt.plot(data.gps[:, 1], data.gps[:, 2])
+# plt.show()
 # data = Data_Stream('run-harbour-rev0', load_truth=True, higher_freq=False, no_cache=True)
 # plt.plot(data.gps[:, 1], data.gps[:, 2])
 # plt.show()
@@ -249,14 +259,14 @@ plt.show()
 print("\n###########################################################")
 print("######### Loading Data")
 print("###########################################################\n")
-cycling_files = ['cyc-asda0', 'cyc-asda-rev0', 'cyc-bro0', 'cyc-bro-rev0',  'cyc-tuto0', 'cyc-tuto-rev0', 'cyc-tuto1', 'cyc-tuto-rev1', 'cyc-tuto2', 'cyc-tuto-rev2']
+files = ['cyc-asda0', 'cyc-asda-rev0', 'cyc-bro-rev0',  'cyc-tuto0', 'cyc-tuto-rev0', 'cyc-tuto1', 'cyc-tuto-rev1', 'cyc-tuto2', 'cyc-tuto-rev2', 'run-harbour0', 'uni','uni2', 'tutoring0', 'dog0', 'uni1', 'mb0', 'tut-rev0', 'train0']
 
-running_files = ['run-harbour0','run-john0']
-walking_files = ['uni', 'uni1','uni2','uni3', 'mb0', 'tutoring0', 'dog0', 'train0']
+# running_files = [,'run-john0']
+walking_files = ['uni3', 'mb0', 'tutoring0', 'dog0', 'train0']
 
 
-training_files = ['uni','uni2', 'tutoring0', 'dog0', 'uni1', 'train0' ]
-testing_files  = ['uni3', 'mb0']
+training_files = files
+testing_files  = ['uni3', 'uni1', 'tut0', 'cyc-bro0']
 training_dataset = load_datasets(training_files, higher_freq=False, no_cache=False)
 testing_dataset = load_datasets(testing_files, higher_freq=False, no_cache=False)
 scaled_training_dataset, scaled_testing_dataset = scale_dataset(training_dataset, testing_dataset)
@@ -275,7 +285,7 @@ print("######### Hyper-Parameters")
 print("###########################################################\n")
 
 seq_len         = 300
-seq_offset      = int(seq_len/300)
+seq_offset      = 5
 warmup_steps    = 5
 batch_size      = 256
 print("Sequence Length: ", seq_len)
