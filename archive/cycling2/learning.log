@@ -1,0 +1,167 @@
+
+###########################################################
+######### Loading Data
+###########################################################
+
+Parsing Data cyc-asda0
+READ DATA FROM CACHE
+READ GROUND TRUTH DATA FROM CACHE
+Parsing Data cyc-asda-rev0
+READ DATA FROM CACHE
+READ GROUND TRUTH DATA FROM CACHE
+Parsing Data cyc-bro-rev0
+READ DATA FROM CACHE
+READ GROUND TRUTH DATA FROM CACHE
+Parsing Data cyc-tuto-rev0
+READ DATA FROM CACHE
+READ GROUND TRUTH DATA FROM CACHE
+Parsing Data cyc-tuto1
+READ DATA FROM CACHE
+READ GROUND TRUTH DATA FROM CACHE
+Parsing Data cyc-tuto-rev1
+READ DATA FROM CACHE
+READ GROUND TRUTH DATA FROM CACHE
+Parsing Data cyc-tuto2
+READ DATA FROM CACHE
+READ GROUND TRUTH DATA FROM CACHE
+Parsing Data cyc-tuto-rev2
+READ DATA FROM CACHE
+READ GROUND TRUTH DATA FROM CACHE
+Parsing Data cyc-bro0
+READ DATA FROM CACHE
+READ GROUND TRUTH DATA FROM CACHE
+Parsing Data cyc-tuto0
+READ DATA FROM CACHE
+READ GROUND TRUTH DATA FROM CACHE
+
+###########################################################
+######### Hyper-Parameters
+###########################################################
+
+Sequence Length:  300
+Sequence Offset:  30
+
+###########################################################
+######### Training Data
+###########################################################
+
+Training Activities:  8
+['cyc-asda0', 'cyc-asda-rev0', 'cyc-bro-rev0', 'cyc-tuto-rev0', 'cyc-tuto1', 'cyc-tuto-rev1', 'cyc-tuto2', 'cyc-tuto-rev2']
+Number of Testing Activities:  2
+['cyc-bro0', 'cyc-tuto0']
+
+###########################################################
+######### Training Sequences and Batches
+###########################################################
+
+Training Data Consists of  12669  Unique Sequences of Length  300
+Testing Data Consists of   4480  Unique Sequences of Length  300
+
+Training Batch Size:  64
+Batches per Epoch:  198
+
+###########################################################
+######### Validation Data
+###########################################################
+
+
+Number of Validation Sequences:  2016
+
+###########################################################
+######### Model
+###########################################################
+
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+gru (GRU)                    (None, None, 128)         54144     
+_________________________________________________________________
+gru_1 (GRU)                  (None, None, 128)         98688     
+_________________________________________________________________
+dense (Dense)                (None, None, 2)           258       
+=================================================================
+Total params: 153,090
+Trainable params: 153,090
+Non-trainable params: 0
+_________________________________________________________________
+Epoch 1/40
+[2K[2K - 130s - loss: 6.6224 - val_loss: 3.3928
+Epoch 2/40
+[2K[2K - 130s - loss: 2.1847 - val_loss: 1.6639
+Epoch 3/40
+[2K[2K - 132s - loss: 1.8443 - val_loss: 0.9036
+Epoch 4/40
+[2K[2K - 132s - loss: 1.7774 - val_loss: 1.3349
+Epoch 5/40
+[2K[2K
+Epoch 00005: ReduceLROnPlateau reducing learning rate to 0.00010000000474974513.
+ - 131s - loss: 1.5538 - val_loss: 1.0475
+Epoch 6/40
+[2K[2K - 130s - loss: 0.9748 - val_loss: 0.7310
+Epoch 7/40
+[2K[2K - 131s - loss: 0.9568 - val_loss: 0.7544
+Epoch 8/40
+[2K[2K
+Epoch 00008: ReduceLROnPlateau reducing learning rate to 1.0000000474974514e-05.
+ - 130s - loss: 0.9629 - val_loss: 0.7493
+Epoch 9/40
+[2K[2K - 129s - loss: 0.9322 - val_loss: 0.7018
+Epoch 10/40
+[2K[2K - 130s - loss: 0.9297 - val_loss: 0.7165
+Epoch 11/40
+[2K[2K
+Epoch 00011: ReduceLROnPlateau reducing learning rate to 1.0000000656873453e-06.
+ - 131s - loss: 0.9293 - val_loss: 0.7210
+Epoch 12/40
+[2K[2K - 131s - loss: 0.9275 - val_loss: 0.7199
+Epoch 13/40
+[2K[2K
+Epoch 00013: ReduceLROnPlateau reducing learning rate to 1.0000001111620805e-07.
+ - 132s - loss: 0.9290 - val_loss: 0.7210
+Epoch 00013: early stopping
+
+###########################################################
+######### Testing Data
+###########################################################
+
+Test Data
+1/1 [==============================] - 53s 53s/step
+loss (test-set): 1.5687997341156006
+Test Data
+1/1 [==============================] - 16s 16s/step
+loss (test-set): 1.2083264589309692
+Plotting  cyc-bro0
+Accuracy of GPS:  18.764520698796797
+Accuracy of RNN:  24.070429278343564
+Plotting  cyc-tuto0
+Accuracy of GPS:  39.50797223959434
+Accuracy of RNN:  36.427776173171615
+
+###########################################################
+######### Training Data
+###########################################################
+
+Plotting  cyc-asda0
+Accuracy of GPS:  49.55513460265882
+Accuracy of RNN:  43.58259585866229
+Plotting  cyc-asda-rev0
+Accuracy of GPS:  7.768181313174656
+Accuracy of RNN:  9.192458876151914
+Plotting  cyc-bro-rev0
+Accuracy of GPS:  40.08529590650815
+Accuracy of RNN:  37.91641018281057
+Plotting  cyc-tuto-rev0
+Accuracy of GPS:  53.48370602172716
+Accuracy of RNN:  53.41555126032717
+Plotting  cyc-tuto1
+Accuracy of GPS:  25.258010046820846
+Accuracy of RNN:  28.96727437981098
+Plotting  cyc-tuto-rev1
+Accuracy of GPS:  13.264314244400785
+Accuracy of RNN:  13.088472506352687
+Plotting  cyc-tuto2
+Accuracy of GPS:  10.169653470620137
+Accuracy of RNN:  13.927106551256722
+Plotting  cyc-tuto-rev2
+Accuracy of GPS:  10.531961303744415
+Accuracy of RNN:  11.026194168691427

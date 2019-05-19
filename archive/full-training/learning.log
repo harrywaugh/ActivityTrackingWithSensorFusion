@@ -1,0 +1,245 @@
+
+###########################################################
+######### Loading Data
+###########################################################
+
+Parsing Data cyc-asda0
+READ DATA FROM CACHE
+READ GROUND TRUTH DATA FROM CACHE
+Parsing Data cyc-asda-rev0
+READ DATA FROM CACHE
+READ GROUND TRUTH DATA FROM CACHE
+Parsing Data cyc-bro-rev0
+READ DATA FROM CACHE
+READ GROUND TRUTH DATA FROM CACHE
+Parsing Data cyc-tuto0
+READ DATA FROM CACHE
+READ GROUND TRUTH DATA FROM CACHE
+Parsing Data cyc-tuto-rev0
+READ DATA FROM CACHE
+READ GROUND TRUTH DATA FROM CACHE
+Parsing Data cyc-tuto1
+READ DATA FROM CACHE
+READ GROUND TRUTH DATA FROM CACHE
+Parsing Data cyc-tuto-rev1
+READ DATA FROM CACHE
+READ GROUND TRUTH DATA FROM CACHE
+Parsing Data cyc-tuto2
+READ DATA FROM CACHE
+READ GROUND TRUTH DATA FROM CACHE
+Parsing Data cyc-tuto-rev2
+READ DATA FROM CACHE
+READ GROUND TRUTH DATA FROM CACHE
+Parsing Data run-harbour0
+READ DATA FROM CACHE
+READ GROUND TRUTH DATA FROM CACHE
+Parsing Data uni
+READ DATA FROM CACHE
+READ GROUND TRUTH DATA FROM CACHE
+Parsing Data uni2
+READ DATA FROM CACHE
+READ GROUND TRUTH DATA FROM CACHE
+Parsing Data tutoring0
+READ DATA FROM CACHE
+READ GROUND TRUTH DATA FROM CACHE
+Parsing Data dog0
+READ DATA FROM CACHE
+READ GROUND TRUTH DATA FROM CACHE
+Parsing Data uni1
+READ DATA FROM CACHE
+READ GROUND TRUTH DATA FROM CACHE
+Parsing Data mb0
+READ DATA FROM CACHE
+READ GROUND TRUTH DATA FROM CACHE
+Parsing Data tut-rev0
+READ DATA FROM CACHE
+READ GROUND TRUTH DATA FROM CACHE
+Parsing Data train0
+READ DATA FROM CACHE
+READ GROUND TRUTH DATA FROM CACHE
+Parsing Data uni3
+READ DATA FROM CACHE
+READ GROUND TRUTH DATA FROM CACHE
+Parsing Data uni1
+READ DATA FROM CACHE
+READ GROUND TRUTH DATA FROM CACHE
+Parsing Data tut0
+READ DATA FROM CACHE
+READ GROUND TRUTH DATA FROM CACHE
+Parsing Data cyc-bro0
+READ DATA FROM CACHE
+READ GROUND TRUTH DATA FROM CACHE
+
+###########################################################
+######### Hyper-Parameters
+###########################################################
+
+Sequence Length:  300
+Sequence Offset:  2
+
+###########################################################
+######### Training Data
+###########################################################
+
+Training Activities:  18
+['cyc-asda0', 'cyc-asda-rev0', 'cyc-bro-rev0', 'cyc-tuto0', 'cyc-tuto-rev0', 'cyc-tuto1', 'cyc-tuto-rev1', 'cyc-tuto2', 'cyc-tuto-rev2', 'run-harbour0', 'uni', 'uni2', 'tutoring0', 'dog0', 'uni1', 'mb0', 'tut-rev0', 'train0']
+Number of Testing Activities:  4
+['uni3', 'uni1', 'tut0', 'cyc-bro0']
+
+###########################################################
+######### Training Sequences and Batches
+###########################################################
+
+Training Data Consists of  727482  Unique Sequences of Length  300
+Testing Data Consists of   185295  Unique Sequences of Length  300
+
+Training Batch Size:  256
+Batches per Epoch:  2842
+
+###########################################################
+######### Validation Data
+###########################################################
+
+
+Number of Validation Sequences:  138971
+
+###########################################################
+######### Model
+###########################################################
+
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+gru (GRU)                    (None, None, 128)         54144     
+_________________________________________________________________
+gru_1 (GRU)                  (None, None, 128)         98688     
+_________________________________________________________________
+dense (Dense)                (None, None, 2)           258       
+=================================================================
+Total params: 153,090
+Trainable params: 153,090
+Non-trainable params: 0
+_________________________________________________________________
+Epoch 1/40
+[2K[2K - 1932s - loss: 3.2171 - val_loss: 0.9827
+Epoch 2/40
+[2K[2K - 1906s - loss: 1.3787 - val_loss: 0.9223
+Epoch 3/40
+[2K[2K - 1897s - loss: 1.3354 - val_loss: 1.0770
+Epoch 4/40
+[2K[2K
+Epoch 00004: ReduceLROnPlateau reducing learning rate to 4.999999873689376e-06.
+ - 1893s - loss: 1.3277 - val_loss: 1.0834
+Epoch 5/40
+[2K[2K - 1856s - loss: 1.1785 - val_loss: 0.9283
+Epoch 6/40
+[2K[2K - 1834s - loss: 1.1811 - val_loss: 0.9119
+Epoch 7/40
+[2K[2K - 1846s - loss: 1.1815 - val_loss: 0.9302
+Epoch 8/40
+[2K[2K
+Epoch 00008: ReduceLROnPlateau reducing learning rate to 2.499999936844688e-07.
+ - 1844s - loss: 1.1810 - val_loss: 0.9131
+Epoch 9/40
+[2K[2K - 1843s - loss: 1.1757 - val_loss: 0.9063
+Epoch 10/40
+[2K[2K - 1848s - loss: 1.1759 - val_loss: 0.9013
+Epoch 11/40
+[2K[2K - 1873s - loss: 1.1758 - val_loss: 0.9092
+Epoch 12/40
+[2K[2K
+Epoch 00012: ReduceLROnPlateau reducing learning rate to 1.2499999968440535e-08.
+ - 1899s - loss: 1.1752 - val_loss: 0.9054
+Epoch 13/40
+[2K[2K - 1898s - loss: 1.1750 - val_loss: 0.9094
+Epoch 14/40
+[2K[2K
+Epoch 00014: ReduceLROnPlateau reducing learning rate to 1e-09.
+ - 1902s - loss: 1.1752 - val_loss: 0.9085
+Epoch 00014: early stopping
+
+###########################################################
+######### Testing Data
+###########################################################
+
+Test Data
+1/1 [==============================] - 47s 47s/step
+loss (test-set): 1.069359302520752
+Test Data
+1/1 [==============================] - 56s 56s/step
+loss (test-set): 1.2273943424224854
+Test Data
+1/1 [==============================] - 47s 47s/step
+loss (test-set): 0.9120140671730042
+Test Data
+1/1 [==============================] - 53s 53s/step
+loss (test-set): 1.4580178260803223
+Plotting  uni3
+Accuracy of GPS:  19.065436503112824
+Accuracy of RNN:  20.525730948281787
+Plotting  uni1
+Accuracy of GPS:  12.897588367843692
+Accuracy of RNN:  15.242926384928642
+Plotting  tut0
+Accuracy of GPS:  16.93503765697072
+Accuracy of RNN:  17.792287415947683
+Plotting  cyc-bro0
+Accuracy of GPS:  18.770111429195513
+Accuracy of RNN:  20.844555902557502
+
+###########################################################
+######### Training Data
+###########################################################
+
+Plotting  cyc-asda0
+Accuracy of GPS:  49.58413686252104
+Accuracy of RNN:  44.666543707925655
+Plotting  cyc-asda-rev0
+Accuracy of GPS:  7.775568340291997
+Accuracy of RNN:  8.832714315685756
+Plotting  cyc-bro-rev0
+Accuracy of GPS:  40.10514989823588
+Accuracy of RNN:  38.29089644539762
+Plotting  cyc-tuto0
+Accuracy of GPS:  39.52896716655895
+Accuracy of RNN:  37.06822701902419
+Plotting  cyc-tuto-rev0
+Accuracy of GPS:  53.55176388766702
+Accuracy of RNN:  53.95131991525587
+Plotting  cyc-tuto1
+Accuracy of GPS:  25.278972098261544
+Accuracy of RNN:  28.001703917824855
+Plotting  cyc-tuto-rev1
+Accuracy of GPS:  13.277332540190093
+Accuracy of RNN:  13.170055693862778
+Plotting  cyc-tuto2
+Accuracy of GPS:  10.17692251853234
+Accuracy of RNN:  12.992363682142736
+Plotting  cyc-tuto-rev2
+Accuracy of GPS:  10.530859298676154
+Accuracy of RNN:  10.059731138052902
+Plotting  run-harbour0
+Accuracy of GPS:  12.603494021326684
+Accuracy of RNN:  11.916307406299406
+Plotting  uni
+Accuracy of GPS:  3.5273633618959033
+Accuracy of RNN:  4.062636958599383
+Plotting  uni2
+Accuracy of GPS:  7.647728502027464
+Accuracy of RNN:  8.521275017205596
+Plotting  tutoring0
+Accuracy of GPS:  16.41363736662771
+Accuracy of RNN:  18.16431419391901
+Plotting  dog0
+Accuracy of GPS:  4.026681164825173
+Accuracy of RNN:  5.051400480717518
+Plotting  uni1
+Accuracy of GPS:  12.897588367843692
+Accuracy of RNN:  15.242926384928642
+Plotting  mb0
+Accuracy of GPS:  9.309041453113714
+Accuracy of RNN:  8.216370509699157
+Plotting  tut-rev0
+Accuracy of GPS:  16.877620915950082
+Accuracy of RNN:  16.494784417256007
+Plotting  train0

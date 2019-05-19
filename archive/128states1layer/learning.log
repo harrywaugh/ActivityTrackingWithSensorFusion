@@ -1,0 +1,152 @@
+
+###########################################################
+######### Loading Data
+###########################################################
+
+Parsing Data uni
+READ DATA FROM CACHE
+READ GROUND TRUTH DATA FROM CACHE
+Parsing Data tutoring0
+READ DATA FROM CACHE
+READ GROUND TRUTH DATA FROM CACHE
+Parsing Data uni2
+READ DATA FROM CACHE
+READ GROUND TRUTH DATA FROM CACHE
+Parsing Data dog0
+READ DATA FROM CACHE
+READ GROUND TRUTH DATA FROM CACHE
+Parsing Data uni3
+READ DATA FROM CACHE
+READ GROUND TRUTH DATA FROM CACHE
+Parsing Data train0
+READ DATA FROM CACHE
+READ GROUND TRUTH DATA FROM CACHE
+Parsing Data mb0
+READ DATA FROM CACHE
+READ GROUND TRUTH DATA FROM CACHE
+Parsing Data uni1
+READ DATA FROM CACHE
+READ GROUND TRUTH DATA FROM CACHE
+
+###########################################################
+######### Hyper-Parameters
+###########################################################
+
+Sequence Length:  300
+Sequence Offset:  30
+
+###########################################################
+######### Training Data
+###########################################################
+
+Training Activities:  6
+['uni', 'tutoring0', 'uni2', 'dog0', 'uni3', 'train0']
+Number of Testing Activities:  2
+['mb0', 'uni1']
+
+###########################################################
+######### Training Sequences and Batches
+###########################################################
+
+Training Data Consists of  21022  Unique Sequences of Length  300
+Testing Data Consists of   6364  Unique Sequences of Length  300
+
+Training Batch Size:  512
+Batches per Epoch:  42
+
+###########################################################
+######### Validation Data
+###########################################################
+
+
+Number of Validation Sequences:  2863
+
+###########################################################
+######### Model
+###########################################################
+
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+gru (GRU)                    (None, None, 128)         54144     
+_________________________________________________________________
+dense (Dense)                (None, None, 2)           258       
+=================================================================
+Total params: 54,402
+Trainable params: 54,402
+Non-trainable params: 0
+_________________________________________________________________
+Epoch 1/40
+[2K[2K - 21s - loss: 60.2352 - val_loss: 9.0974
+Epoch 2/40
+[2K[2K - 21s - loss: 14.2591 - val_loss: 9.8554
+Epoch 3/40
+[2K[2K - 19s - loss: 13.3751 - val_loss: 4.3804
+Epoch 4/40
+[2K[2K - 19s - loss: 6.7131 - val_loss: 3.2566
+Epoch 5/40
+[2K[2K - 19s - loss: 5.5151 - val_loss: 2.4917
+Epoch 6/40
+[2K[2K - 19s - loss: 4.8648 - val_loss: 0.5927
+Epoch 7/40
+[2K[2K - 19s - loss: 4.6405 - val_loss: 2.7073
+Epoch 8/40
+[2K[2K - 19s - loss: 4.4076 - val_loss: 0.4650
+Epoch 9/40
+[2K[2K - 19s - loss: 5.1882 - val_loss: 1.4728
+Epoch 10/40
+[2K[2K
+Epoch 00010: ReduceLROnPlateau reducing learning rate to 0.00010000000474974513.
+ - 19s - loss: 5.8348 - val_loss: 3.4515
+Epoch 11/40
+[2K[2K - 19s - loss: 3.8663 - val_loss: 0.3593
+Epoch 12/40
+[2K[2K - 19s - loss: 0.7786 - val_loss: 0.2874
+Epoch 13/40
+[2K[2K - 19s - loss: 0.6987 - val_loss: 0.2851
+Epoch 14/40
+[2K[2K - 19s - loss: 0.6948 - val_loss: 0.2915
+Epoch 15/40
+[2K[2K
+Epoch 00015: ReduceLROnPlateau reducing learning rate to 1.0000000474974514e-05.
+ - 19s - loss: 0.6991 - val_loss: 0.2872
+Epoch 16/40
+[2K[2K - 20s - loss: 0.6849 - val_loss: 0.2855
+Epoch 17/40
+[2K[2K
+Epoch 00017: ReduceLROnPlateau reducing learning rate to 1.0000000656873453e-06.
+ - 19s - loss: 0.6847 - val_loss: 0.2854
+Epoch 00017: early stopping
+
+###########################################################
+######### Testing Data
+###########################################################
+
+Test Data
+1/1 [==============================] - 19s 19s/step
+loss (test-set): 0.5708068609237671
+Test Data
+1/1 [==============================] - 25s 25s/step
+loss (test-set): 1.2283437252044678
+Plotting  mb0
+Accuracy of GPS:  8.118735040550984
+Accuracy of RNN:  10.97462652972654
+Plotting  uni1
+Accuracy of GPS:  14.19821065975769
+Accuracy of RNN:  14.87997301500462
+Plotting  uni
+Accuracy of GPS:  4.244203826619129
+Accuracy of RNN:  8.82070544368016
+Plotting  tutoring0
+Accuracy of GPS:  4.147782885750094
+Accuracy of RNN:  6.595426120826038
+Plotting  uni2
+Accuracy of GPS:  7.065320232180366
+Accuracy of RNN:  7.306849177573312
+Plotting  dog0
+Accuracy of GPS:  4.024814488360335
+Accuracy of RNN:  6.799493632186617
+Plotting  uni3
+Accuracy of GPS:  18.392328962502493
+Accuracy of RNN:  15.23294688649413
+Plotting  train0
